@@ -1,5 +1,6 @@
 ﻿using BabelEngine4.Assets.Aseprite;
 using BabelEngine4.Assets.Json;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -15,6 +16,8 @@ namespace BabelEngine4.Assets.Sprites
     {
         AsepriteData Meta;
 
+        Dictionary<string, AsepriteAnimation> Animations = new Dictionary<string, AsepriteAnimation>();
+
         public SpriteSheet(string _Filename) : base(_Filename)
         {
             //
@@ -26,6 +29,23 @@ namespace BabelEngine4.Assets.Sprites
 
             JsonContainer MetaJson = Content.Load<JsonContainer>(Filename + ".meta");
             Meta = JsonConvert.DeserializeObject<AsepriteData>(MetaJson.Data);
+
+            for(int i = 0; i < Meta.meta.frameTags.Length; i++)
+            {
+                Animations.Add(Meta.meta.frameTags[i].name, Meta.meta.frameTags[i]);
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 Position, string Animation, int Frame)
+        {
+            int FrameID = Animations[Animation].from + Frame;
+
+            spriteBatch.Draw(
+                Raw,
+                Position,
+                Meta.frames.Values.ElementAt(FrameID).frame.ToRect(),
+                Color.White
+            );
         }
     }
 }

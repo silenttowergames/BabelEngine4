@@ -47,9 +47,9 @@ namespace BabelEngine4.Assets
 
         void load<T, C>(Dictionary<string, T> assetMap) where T : Asset<C>
         {
-            foreach(T t in assetMap.Values)
+            for(int i = 0; i < assetMap.Values.Count; i++)
             {
-                t.Load(Content);
+                assetMap.Values.ElementAt(i).Load(Content);
             }
         }
 

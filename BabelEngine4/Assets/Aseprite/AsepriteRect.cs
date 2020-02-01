@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,11 @@ namespace BabelEngine4.Assets.Aseprite
 {
     public struct AsepriteRect
     {
-        public float x, y, w, h;
+        public int x, y, w, h;
+
+        public Rectangle ToRect()
+        {
+            return new Rectangle(x, y, w, h);
+        }
     }
 }

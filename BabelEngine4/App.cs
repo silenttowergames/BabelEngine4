@@ -82,11 +82,14 @@ namespace BabelEngine4
         {
             renderer.spriteBatch.Begin();
 
+            /*
             renderer.spriteBatch.Draw(
                 assets.sprite("8x8").Raw,
                 new Rectangle(0, 0, 32, 32),
                 Color.White
             );
+            */
+            assets.sprite("8x8").Draw(renderer.spriteBatch, new Vector2(), "Coin Dark", 1);
 
             renderer.spriteBatch.End();
 
