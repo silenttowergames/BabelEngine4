@@ -1,5 +1,7 @@
-﻿using BabelEngine4.Assets.Aseprite;
+﻿using BabelEngine4.Assets;
+using BabelEngine4.Assets.Aseprite;
 using BabelEngine4.Assets.Json;
+using BabelEngine4.Assets.Sprites;
 using BabelEngine4.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
@@ -15,27 +17,28 @@ namespace BabelEngine4
 {
     public class App : Game
     {
+        // A few foolish globals
+        public static AssetManager assets;
+
+        public static Renderer renderer;
+
+        public static WindowManager windowManager;
+
+        public static World world;
+
         public static int LayerIDCounter = 0;
+
+        // Local vars
 
         string
             Title,
             Version
         ;
 
-        JsonContainer j;
-
-        Renderer renderer;
-
-        WindowManager windowManager;
-
-        World world;
-
         public App(string _Title, string _Version, Point Resolution)
         {
             Title = _Title;
             Version = _Version;
-
-            Content.RootDirectory = "Content";
 
             renderer = new Renderer()
             {
@@ -47,6 +50,11 @@ namespace BabelEngine4
             {
                 window = Window
             };
+
+            assets = new AssetManager(Content);
+            assets.addSprites(
+                new SpriteSheet("8x8")
+            );
         }
 
         protected override void Initialize()
@@ -60,10 +68,7 @@ namespace BabelEngine4
         {
             renderer.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            j = Content.Load<JsonContainer>("8x8.meta");
-
-            AsepriteData d = JsonConvert.DeserializeObject<AsepriteData>(j.Data);
-            Console.WriteLine(d.frames["8x8 1.aseprite"].frame.x);
+            assets.Load();
 
             base.LoadContent();
         }
@@ -75,6 +80,16 @@ namespace BabelEngine4
 
         protected override void Draw(GameTime gameTime)
         {
+            renderer.spriteBatch.Begin();
+
+            renderer.spriteBatch.Draw(
+                assets.sprite("8x8").Raw,
+                new Rectangle(0, 0, 32, 32),
+                Color.White
+            );
+
+            renderer.spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }
