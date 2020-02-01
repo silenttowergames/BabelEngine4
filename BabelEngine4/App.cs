@@ -2,6 +2,8 @@
 using BabelEngine4.Assets.Aseprite;
 using BabelEngine4.Assets.Json;
 using BabelEngine4.Assets.Sprites;
+using BabelEngine4.ECS.Components;
+using BabelEngine4.ECS.Systems;
 using BabelEngine4.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
@@ -30,10 +32,15 @@ namespace BabelEngine4
 
         // Local vars
 
+        Entity e;
+        
         string
             Title,
             Version
         ;
+
+        AnimationSystem animationSystem = new AnimationSystem();
+        DrawSystem drawSystem = new DrawSystem();
 
         public App(string _Title, string _Version, Point Resolution)
         {
@@ -55,6 +62,16 @@ namespace BabelEngine4
             assets.addSprites(
                 new SpriteSheet("8x8")
             );
+
+            // ECS
+            world = new World();
+            e = world.CreateEntity();
+            e.Set(new Sprite(assets.sprite("8x8"), "Protag") { Effect = SpriteEffects.None, LayerDepth = 1 });
+            e.Set(new Body());
+
+            Entity f = world.CreateEntity();
+            f.Set(new Sprite(assets.sprite("8x8"), "Coin Light") { Effect = SpriteEffects.None, LayerDepth = 0.5f });
+            f.Set(new Body() { Position = new Vector2(4) });
         }
 
         protected override void Initialize()
@@ -75,23 +92,14 @@ namespace BabelEngine4
 
         protected override void Update(GameTime gameTime)
         {
+            animationSystem.Update();
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            renderer.spriteBatch.Begin();
-
-            /*
-            renderer.spriteBatch.Draw(
-                assets.sprite("8x8").Raw,
-                new Rectangle(0, 0, 32, 32),
-                Color.White
-            );
-            */
-            assets.sprite("8x8").Draw(renderer.spriteBatch, new Vector2(), "Coin Dark", 1);
-
-            renderer.spriteBatch.End();
+            drawSystem.Update();
 
             base.Draw(gameTime);
         }

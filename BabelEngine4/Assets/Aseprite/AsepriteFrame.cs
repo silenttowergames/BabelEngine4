@@ -14,6 +14,6 @@ namespace BabelEngine4.Assets.Aseprite
 
         public bool rotated, trimmed;
 
-        public float duration;
+        public int duration;
     }
 }

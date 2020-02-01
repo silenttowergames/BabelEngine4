@@ -10,6 +10,8 @@ namespace BabelEngine4.Assets.Aseprite
     {
         public int from, to;
 
+        public int Length => to - from;
+
         public string direction, name;
     }
 }

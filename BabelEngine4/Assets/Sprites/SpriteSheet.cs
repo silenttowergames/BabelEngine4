@@ -14,13 +14,23 @@ namespace BabelEngine4.Assets.Sprites
 {
     public class SpriteSheet : Asset<Texture2D>
     {
-        AsepriteData Meta;
+        public AsepriteData Meta;
 
         Dictionary<string, AsepriteAnimation> Animations = new Dictionary<string, AsepriteAnimation>();
 
         public SpriteSheet(string _Filename) : base(_Filename)
         {
             //
+        }
+
+        public AsepriteAnimation GetAnimation(string AnimationID)
+        {
+            if (!Animations.ContainsKey(AnimationID))
+            {
+                return null;
+            }
+
+            return Animations[AnimationID];
         }
 
         public override void Load(ContentManager Content)
@@ -36,7 +46,18 @@ namespace BabelEngine4.Assets.Sprites
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 Position, string Animation, int Frame)
+        public void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 Position,
+            string Animation,
+            int Frame,
+            Color color,
+            float Rotation,
+            Vector2 Origin,
+            Vector2 Scale,
+            SpriteEffects Effect,
+            float LayerDepth
+        )
         {
             int FrameID = Animations[Animation].from + Frame;
 
@@ -44,7 +65,12 @@ namespace BabelEngine4.Assets.Sprites
                 Raw,
                 Position,
                 Meta.frames.Values.ElementAt(FrameID).frame.ToRect(),
-                Color.White
+                color,
+                Rotation,
+                Origin,
+                Scale,
+                Effect,
+                LayerDepth
             );
         }
     }
