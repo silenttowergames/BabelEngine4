@@ -5,6 +5,7 @@ using BabelEngine4.Assets.Sprites;
 using BabelEngine4.ECS.Components;
 using BabelEngine4.ECS.Components.AI;
 using BabelEngine4.ECS.Systems;
+using BabelEngine4.Input;
 using BabelEngine4.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
@@ -23,6 +24,8 @@ namespace BabelEngine4
         // A few foolish globals
         public static AssetManager assets;
 
+        public static InputManager input;
+
         public static Renderer renderer;
 
         public static WindowManager windowManager;
@@ -40,13 +43,15 @@ namespace BabelEngine4
             Version
         ;
 
-        IBabelSystem[] systems;
+        public IBabelSystem[] systems;
         DrawSystem drawSystem = new DrawSystem();
 
         public App(string _Title, string _Version, Point Resolution)
         {
             Title = _Title;
             Version = _Version;
+
+            input = new InputManager();
 
             renderer = new Renderer()
             {
@@ -60,28 +65,6 @@ namespace BabelEngine4
             };
 
             assets = new AssetManager(Content);
-            assets.addSprites(
-                new SpriteSheet("8x8")
-            );
-
-            // ECS
-            world = new World();
-            e = world.CreateEntity();
-            e.Set(new Sprite(assets.sprite("8x8"), "Protag") { Effect = SpriteEffects.None, LayerDepth = 1 });
-            e.Set(new Director());
-            e.Set(new Body());
-
-            Entity f = world.CreateEntity();
-            f.Set(new Sprite(assets.sprite("8x8"), "Coin Light") { Effect = SpriteEffects.None, LayerDepth = 0.5f });
-            f.Set(new Body() { Position = new Vector2(4) });
-
-            systems = new IBabelSystem[]
-            {
-                new ControlSystem(),
-                new DirectorSystem(),
-                new MoveSystem(),
-                new AnimationSystem(),
-            };
         }
 
         protected override void Initialize()
@@ -102,6 +85,8 @@ namespace BabelEngine4
 
         protected override void Update(GameTime gameTime)
         {
+            input.Update();
+
             for(int i = 0; i < systems.Length; i++)
             {
                 systems[i].Update();

@@ -24,6 +24,21 @@ namespace BabelEngine4.ECS.Systems
                 {
                     body.Velocity.X += 1;
                 }
+
+                if (director.MoveLeft)
+                {
+                    body.Velocity.X -= 1;
+                }
+
+                if (director.MoveDown)
+                {
+                    body.Velocity.Y += 1;
+                }
+
+                if (director.MoveUp)
+                {
+                    body.Velocity.Y -= 1;
+                }
             }
         }
     }
