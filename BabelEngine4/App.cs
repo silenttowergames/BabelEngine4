@@ -3,6 +3,7 @@ using BabelEngine4.Assets.Aseprite;
 using BabelEngine4.Assets.Json;
 using BabelEngine4.Assets.Sprites;
 using BabelEngine4.ECS.Components;
+using BabelEngine4.ECS.Components.AI;
 using BabelEngine4.ECS.Systems;
 using BabelEngine4.Rendering;
 using DefaultEcs;
@@ -39,7 +40,7 @@ namespace BabelEngine4
             Version
         ;
 
-        AnimationSystem animationSystem = new AnimationSystem();
+        IBabelSystem[] systems;
         DrawSystem drawSystem = new DrawSystem();
 
         public App(string _Title, string _Version, Point Resolution)
@@ -67,11 +68,20 @@ namespace BabelEngine4
             world = new World();
             e = world.CreateEntity();
             e.Set(new Sprite(assets.sprite("8x8"), "Protag") { Effect = SpriteEffects.None, LayerDepth = 1 });
+            e.Set(new Director());
             e.Set(new Body());
 
             Entity f = world.CreateEntity();
             f.Set(new Sprite(assets.sprite("8x8"), "Coin Light") { Effect = SpriteEffects.None, LayerDepth = 0.5f });
             f.Set(new Body() { Position = new Vector2(4) });
+
+            systems = new IBabelSystem[]
+            {
+                new ControlSystem(),
+                new DirectorSystem(),
+                new MoveSystem(),
+                new AnimationSystem(),
+            };
         }
 
         protected override void Initialize()
@@ -92,7 +102,10 @@ namespace BabelEngine4
 
         protected override void Update(GameTime gameTime)
         {
-            animationSystem.Update();
+            for(int i = 0; i < systems.Length; i++)
+            {
+                systems[i].Update();
+            }
 
             base.Update(gameTime);
         }

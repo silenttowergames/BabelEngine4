@@ -14,9 +14,11 @@ namespace BabelEngine4.ECS.Systems
     {
         public void Update()
         {
-            Entity[] Entities = App.world.GetEntities().With<Sprite>().With<Body>().AsSet().GetEntities().ToArray();
+            ReadOnlySpan<Entity> Entities = App.world.GetEntities().With<Sprite>().With<Body>().AsSet().GetEntities();
             Sprite sprite;
             Body body;
+
+            App.renderer.graphics.GraphicsDevice.Clear(Color.DarkCyan);
 
             App.renderer.spriteBatch.Begin(
                 SpriteSortMode.FrontToBack,
@@ -24,10 +26,10 @@ namespace BabelEngine4.ECS.Systems
                 SamplerState.PointClamp
             );
 
-            for (int i = 0; i < Entities.Length; i++)
+            foreach(ref readonly Entity entity in Entities)
             {
-                sprite = Entities[i].Get<Sprite>();
-                body = Entities[i].Get<Body>();
+                sprite = entity.Get<Sprite>();
+                body = entity.Get<Body>();
 
                 sprite.sheet.Draw(
                     App.renderer.spriteBatch,

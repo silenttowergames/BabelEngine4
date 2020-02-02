@@ -9,6 +9,9 @@ namespace BabelEngine4.ECS.Components
 {
     public struct Body
     {
-        public Vector2 Position;
+        public Vector2
+            Position,
+            Velocity
+        ;
     }
 }
