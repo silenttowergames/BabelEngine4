@@ -9,6 +9,17 @@ namespace BabelEngine4.Rendering
 {
     public class WindowManager
     {
+        bool
+            Changed = true,
+            fullscreen = false
+        ;
+
+        public float Zoom
+        {
+            get;
+            protected set;
+        }
+
         public GameWindow window;
 
         public string Title
@@ -21,6 +32,76 @@ namespace BabelEngine4.Rendering
             set
             {
                 window.Title = value;
+            }
+        }
+
+        Point size;
+        public Point WindowSize
+        {
+            get
+            {
+                return size;
+            }
+
+            set
+            {
+                if (size == value)
+                {
+                    return;
+                }
+
+                Changed = true;
+
+                size = value;
+            }
+        }
+
+        public Point Size;
+
+        public bool Fullscreen
+        {
+            get
+            {
+                return fullscreen;
+            }
+
+            set
+            {
+                if (fullscreen == value)
+                {
+                    return;
+                }
+
+                Changed = true;
+
+                fullscreen = value;
+            }
+        }
+
+        public void Update()
+        {
+            if (Changed)
+            {
+                if (Fullscreen)
+                {
+                    Size = new Point(
+                        App.renderer.graphics.GraphicsDevice.DisplayMode.Width,
+                        App.renderer.graphics.GraphicsDevice.DisplayMode.Height
+                    );
+                }
+                else
+                {
+                    Size = size;
+                }
+
+                App.renderer.graphics.PreferredBackBufferWidth = Size.X;
+                App.renderer.graphics.PreferredBackBufferHeight = Size.Y;
+
+                Point _Zoom = Size / App.renderer.resolution;
+                Zoom = (float)Math.Floor((float)Math.Min(_Zoom.X, _Zoom.Y));
+                Console.WriteLine(Zoom);
+
+                App.renderer.graphics.ApplyChanges();
             }
         }
     }

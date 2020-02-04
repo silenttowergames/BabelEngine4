@@ -13,6 +13,8 @@ namespace BabelEngine4.ECS.Components
 {
     public struct Sprite
     {
+        public Color color;
+
         public SpriteSheet sheet;
 
         public string AnimationID
@@ -23,14 +25,17 @@ namespace BabelEngine4.ECS.Components
 
         public SpriteEffects Effect;
 
-        public int Frame;
+        public int
+            Frame,
+            RenderTargetID
+        ;
 
         public float
             LayerDepth,
             Rotation
         ;
 
-        public Ticker ticker;
+        public Ticker animationTicker;
 
         public Vector2 Origin, Scale;
 
@@ -39,14 +44,16 @@ namespace BabelEngine4.ECS.Components
         public Sprite(SpriteSheet _sheet, string _AnimationID)
         {
             AnimationID = _AnimationID;
+            color = Color.White;
             Frame = 0;
-            ticker = new Ticker();
+            animationTicker = new Ticker();
             sheet = _sheet;
             Effect = SpriteEffects.None;
             Origin = new Vector2();
             Scale = new Vector2(1);
             LayerDepth = 0;
             Rotation = 0;
+            RenderTargetID = 0;
         }
 
         public void SetAnimation(string _AnimationID)

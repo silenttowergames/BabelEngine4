@@ -32,12 +32,14 @@ namespace BabelEngine4
 
         public static World world;
 
+        public static RenderTarget[] renderTargets;
+
         public static int LayerIDCounter = 0;
+
+        public static bool DoExit = false;
 
         // Local vars
 
-        Entity e;
-        
         string
             Title,
             Version
@@ -46,7 +48,7 @@ namespace BabelEngine4
         public IBabelSystem[] systems;
         DrawSystem drawSystem = new DrawSystem();
 
-        public App(string _Title, string _Version, Point Resolution)
+        public App(string _Title, string _Version, Point Resolution, Point Size)
         {
             Title = _Title;
             Version = _Version;
@@ -61,7 +63,8 @@ namespace BabelEngine4
 
             windowManager = new WindowManager()
             {
-                window = Window
+                window = Window,
+                WindowSize = Size
             };
 
             assets = new AssetManager(Content);
@@ -80,17 +83,29 @@ namespace BabelEngine4
 
             assets.Load();
 
+            for(int i = 0; i < renderTargets.Length; i++)
+            {
+                renderTargets[i].Reset();
+            }
+
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
+            if (DoExit)
+            {
+                Exit();
+            }
+
             input.Update();
 
             for(int i = 0; i < systems.Length; i++)
             {
                 systems[i].Update();
             }
+
+            windowManager.Update();
 
             base.Update(gameTime);
         }

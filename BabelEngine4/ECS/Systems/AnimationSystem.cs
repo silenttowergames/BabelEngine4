@@ -16,14 +16,14 @@ namespace BabelEngine4.ECS.Systems
 
             for (int i = 0; i < sprites.Length; i++)
             {
-                if (sprites[i].ticker.GetIsFinished())
+                if (sprites[i].animationTicker.GetIsFinished())
                 {
                     if (sprites[i].Frame++ >= sprites[i].Animation.Length)
                     {
                         sprites[i].Frame = 0;
                     }
 
-                    sprites[i].ticker.Reset(sprites[i].sheet.Meta.frames.Values.ElementAt(sprites[i].Animation.from + sprites[i].Frame).duration / (1000 / 60));
+                    sprites[i].animationTicker.Reset(sprites[i].sheet.Meta.frames.Values.ElementAt(sprites[i].Animation.from + sprites[i].Frame).duration / (1000 / 60));
                 }
             }
         }
