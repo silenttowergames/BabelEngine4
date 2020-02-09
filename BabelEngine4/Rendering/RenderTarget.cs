@@ -1,4 +1,5 @@
-﻿using BabelEngine4.ECS.Components;
+﻿using BabelEngine4.Assets.Shaders;
+using BabelEngine4.ECS.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +17,8 @@ namespace BabelEngine4.Rendering
         public List<int> sprites;
 
         RenderTarget2D renderTarget;
+
+        public Shader shader = null;
 
         public Point Position
         {

@@ -1,4 +1,5 @@
 ﻿using BabelEngine4.ECS.Components;
+using BabelEngine4.ECS.Components.Rendering;
 using DefaultEcs;
 using System;
 using System.Collections.Generic;

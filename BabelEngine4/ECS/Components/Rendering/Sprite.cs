@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelEngine4.ECS.Components
+namespace BabelEngine4.ECS.Components.Rendering
 {
     public struct Sprite
     {

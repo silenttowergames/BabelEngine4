@@ -82,6 +82,8 @@ namespace BabelEngine4.Rendering
         {
             if (Changed)
             {
+                Changed = false;
+
                 if (Fullscreen)
                 {
                     Size = new Point(
@@ -99,9 +101,13 @@ namespace BabelEngine4.Rendering
 
                 Point _Zoom = Size / App.renderer.resolution;
                 Zoom = (float)Math.Floor((float)Math.Min(_Zoom.X, _Zoom.Y));
-                Console.WriteLine(Zoom);
 
                 App.renderer.graphics.ApplyChanges();
+
+                foreach (RenderTarget renderTarget in App.renderTargets)
+                {
+                    renderTarget.Reset();
+                }
             }
         }
     }

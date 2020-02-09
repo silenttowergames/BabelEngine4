@@ -1,4 +1,5 @@
 ﻿using BabelEngine4.ECS.Components;
+using BabelEngine4.ECS.Components.Rendering;
 using BabelEngine4.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,8 @@ namespace BabelEngine4.ECS.Systems
 
         public void Update()
         {
-            ReadOnlySpan<Entity> Entities = App.world.GetEntities().With<Sprite>().With<Body>().AsSet().GetEntities();
+            ReadOnlySpan<Entity> EntitiesWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet().GetEntities();
+            ReadOnlySpan<Entity> EntitiesWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet().GetEntities();
 
             if (primaryRenderTarget == null)
             {
@@ -28,7 +30,7 @@ namespace BabelEngine4.ECS.Systems
             // Render the targets individually
             for (int i = 0; i < App.renderTargets.Length; i++)
             {
-                UseRenderTarget(App.renderTargets[i], ref Entities);
+                UseRenderTarget(App.renderTargets[i], ref EntitiesWithSprites, ref EntitiesWithText);
             }
 
             // Draw the subtargets onto our primary target
@@ -36,7 +38,7 @@ namespace BabelEngine4.ECS.Systems
 
             App.renderer.spriteBatch.Begin(
                 SpriteSortMode.FrontToBack,
-                BlendState.AlphaBlend,
+                BlendState.NonPremultiplied,
                 SamplerState.PointClamp
             );
 
@@ -54,7 +56,7 @@ namespace BabelEngine4.ECS.Systems
 
             App.renderer.spriteBatch.Begin(
                 SpriteSortMode.FrontToBack,
-                BlendState.AlphaBlend,
+                BlendState.NonPremultiplied,
                 SamplerState.PointClamp
             );
 
@@ -75,20 +77,23 @@ namespace BabelEngine4.ECS.Systems
             App.renderer.spriteBatch.End();
         }
 
-        void UseRenderTarget(RenderTarget renderTarget, ref ReadOnlySpan<Entity> Entities)
+        void UseRenderTarget(RenderTarget renderTarget, ref ReadOnlySpan<Entity> EntitiesWithSprites, ref ReadOnlySpan<Entity> EntitiesWithText)
         {
             Sprite sprite;
+            Text text;
             Body body;
 
             renderTarget.Setup(App.renderer.spriteBatch);
 
             App.renderer.spriteBatch.Begin(
-                SpriteSortMode.FrontToBack,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp
+                sortMode: SpriteSortMode.FrontToBack,
+                blendState: BlendState.NonPremultiplied,
+                samplerState: SamplerState.PointClamp,
+                effect: renderTarget.shader?.Raw
             );
 
-            foreach (ref readonly Entity entity in Entities)
+            // Draw sprites
+            foreach (ref readonly Entity entity in EntitiesWithSprites)
             {
                 sprite = entity.Get<Sprite>();
 
@@ -111,6 +116,32 @@ namespace BabelEngine4.ECS.Systems
                     sprite.Scale,
                     sprite.Effect,
                     sprite.LayerDepth
+                );
+            }
+
+            // Draw text
+            foreach (ref readonly Entity entity in EntitiesWithText)
+            {
+                text = entity.Get<Text>();
+
+                // Could definitely be more efficient :/
+                if (text.RenderTargetID != renderTarget.ID)
+                {
+                    continue;
+                }
+
+                body = entity.Get<Body>();
+
+                text.font.Draw(
+                    App.renderer.spriteBatch,
+                    text.Message,
+                    body.Position,
+                    text.color,
+                    text.Rotation,
+                    text.Origin,
+                    text.Scale,
+                    text.effect,
+                    text.LayerDepth
                 );
             }
 

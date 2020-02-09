@@ -20,7 +20,6 @@ namespace BabelEngine4.Assets.Sprites
 
         public SpriteSheet(string _Filename) : base(_Filename)
         {
-            //
         }
 
         public AsepriteAnimation GetAnimation(string AnimationID)

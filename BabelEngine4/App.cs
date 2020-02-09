@@ -19,6 +19,14 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
+    // TODO: Spawner dictionary
+    // TODO: Menus
+    // TODO: SFX & Music
+    // TODO: Layers
+    // TODO: Tile maps
+    // TODO: Tiled building
+    // TODO: A* pathfinding with tilemap
+
     public class App : Game
     {
         // A few foolish globals
@@ -100,7 +108,7 @@ namespace BabelEngine4
 
             input.Update();
 
-            for(int i = 0; i < systems.Length; i++)
+            for (int i = 0; i < systems.Length; i++)
             {
                 systems[i].Update();
             }

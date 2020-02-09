@@ -1,4 +1,6 @@
-﻿using BabelEngine4.Assets.Sprites;
+﻿using BabelEngine4.Assets.Fonts;
+using BabelEngine4.Assets.Shaders;
+using BabelEngine4.Assets.Sprites;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,6 +15,10 @@ namespace BabelEngine4.Assets
     {
         ContentManager Content;
 
+        Dictionary<string, Font> fonts = new Dictionary<string, Font>();
+
+        Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
+
         Dictionary<string, SpriteSheet> sprites = new Dictionary<string, SpriteSheet>();
 
         public AssetManager(ContentManager _Content, string _RootDir = "Content")
@@ -24,6 +30,8 @@ namespace BabelEngine4.Assets
 
         public void Load()
         {
+            load<Font, SpriteFont>(fonts);
+            load<Shader, Effect>(shaders);
             load<SpriteSheet, Texture2D>(sprites);
         }
 
@@ -53,9 +61,29 @@ namespace BabelEngine4.Assets
             }
         }
 
+        public void addFonts(params Font[] _fonts)
+        {
+            add<Font, SpriteFont>(fonts, _fonts);
+        }
+
+        public void addShaders(params Shader[] _shader)
+        {
+            add<Shader, Effect>(shaders, _shader);
+        }
+
         public void addSprites(params SpriteSheet[] spriteSheets)
         {
             add<SpriteSheet, Texture2D>(sprites, spriteSheets);
+        }
+
+        public Font font(string Filename)
+        {
+            return get<Font, SpriteFont>(fonts, Filename);
+        }
+
+        public Shader shader(string Filename)
+        {
+            return get<Shader, Effect>(shaders, Filename);
         }
 
         public SpriteSheet sprite(string Filename)
