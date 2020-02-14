@@ -12,6 +12,8 @@ namespace BabelEngine4.Rendering
 {
     public class RenderTarget
     {
+        public Camera camera = new Camera() { Zoom = 1 };
+
         public Color BGColor;
 
         public List<int> sprites;
@@ -58,6 +60,11 @@ namespace BabelEngine4.Rendering
             }
 
             Size = _Size;
+        }
+
+        public void Center(Vector2 FollowPos)
+        {
+            camera.Position = FollowPos - (new Vector2(Resolution.X, Resolution.Y) / 2);
         }
 
         public void Reset()

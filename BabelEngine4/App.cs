@@ -19,11 +19,11 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
+    // TODO: Cameras
     // TODO: Spawner dictionary
     // TODO: Menus
     // TODO: SFX & Music
     // TODO: Layers
-    // TODO: Tile maps
     // TODO: Tiled building
     // TODO: A* pathfinding with tilemap
     // TODO: Collisions

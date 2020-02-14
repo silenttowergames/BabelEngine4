@@ -98,7 +98,8 @@ namespace BabelEngine4.ECS.Systems
                 sortMode: SpriteSortMode.FrontToBack,
                 blendState: BlendState.NonPremultiplied,
                 samplerState: SamplerState.PointClamp,
-                effect: renderTarget.shader?.Raw
+                effect: renderTarget.shader?.Raw,
+                transformMatrix: renderTarget.camera.matrix
             );
 
             renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
