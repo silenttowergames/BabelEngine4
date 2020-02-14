@@ -26,6 +26,9 @@ namespace BabelEngine4
     // TODO: Tile maps
     // TODO: Tiled building
     // TODO: A* pathfinding with tilemap
+    // TODO: Collisions
+    // TODO: Saving; save states; config
+    // TODO: Stress test
 
     public class App : Game
     {
@@ -91,11 +94,6 @@ namespace BabelEngine4
 
             assets.Load();
 
-            for(int i = 0; i < renderTargets.Length; i++)
-            {
-                renderTargets[i].Reset();
-            }
-
             base.LoadContent();
         }
 
@@ -106,8 +104,13 @@ namespace BabelEngine4
                 Exit();
             }
 
-            input.Update();
+            if(input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
+            {
+                windowManager.Fullscreen = !windowManager.Fullscreen;
+            }
 
+            input.Update();
+            
             for (int i = 0; i < systems.Length; i++)
             {
                 systems[i].Update();

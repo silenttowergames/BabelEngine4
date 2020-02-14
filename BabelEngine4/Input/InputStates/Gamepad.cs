@@ -14,16 +14,23 @@ namespace BabelEngine4.Input.InputStates
 
         PlayerIndex Index;
 
+        public static Buttons[] AllButtons = null;
+
         public Gamepad(PlayerIndex _Index)
         {
             Index = _Index;
+
+            if (AllButtons == null)
+            {
+                AllButtons = (Buttons[])Enum.GetValues(typeof(Buttons));
+            }
         }
 
         public override void Update()
         {
             State = GamePad.GetState(Index);
 
-            foreach (Buttons K in Enum.GetValues(typeof(Buttons)))
+            foreach (Buttons K in AllButtons)
             {
                 Set(K, State.IsButtonDown(K));
             }

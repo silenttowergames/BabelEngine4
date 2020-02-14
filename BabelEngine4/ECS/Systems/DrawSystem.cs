@@ -14,18 +14,28 @@ namespace BabelEngine4.ECS.Systems
 {
     public class DrawSystem : IBabelSystem
     {
-        RenderTarget primaryRenderTarget = null;
+        EntitySet
+            EntitySetWithSprites = null,
+            EntitySetWithText = null
+        ;
+
+        public static RenderTarget primaryRenderTarget = null;
 
         public void Update()
         {
-            ReadOnlySpan<Entity> EntitiesWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet().GetEntities();
-            ReadOnlySpan<Entity> EntitiesWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet().GetEntities();
-
-            if (primaryRenderTarget == null)
+            //*
+            if (EntitySetWithSprites == null)
             {
-                primaryRenderTarget = new RenderTarget(-1, App.renderer.resolution);
-                primaryRenderTarget.Reset();
+                EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
             }
+
+            if (EntitySetWithText == null)
+            {
+                EntitySetWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet();
+            }
+
+            ReadOnlySpan<Entity> EntitiesWithSprites = EntitySetWithSprites.GetEntities();
+            ReadOnlySpan<Entity> EntitiesWithText = EntitySetWithText.GetEntities();
 
             // Render the targets individually
             for (int i = 0; i < App.renderTargets.Length; i++)
@@ -51,7 +61,9 @@ namespace BabelEngine4.ECS.Systems
 
             // Render the primary target
             App.renderer.graphics.GraphicsDevice.SetRenderTarget(null);
+            //*/
 
+            //*
             App.renderer.graphics.GraphicsDevice.Clear(Color.Black);
 
             App.renderer.spriteBatch.Begin(
@@ -75,14 +87,11 @@ namespace BabelEngine4.ECS.Systems
             );
 
             App.renderer.spriteBatch.End();
+            //*/
         }
 
         void UseRenderTarget(RenderTarget renderTarget, ref ReadOnlySpan<Entity> EntitiesWithSprites, ref ReadOnlySpan<Entity> EntitiesWithText)
         {
-            Sprite sprite;
-            Text text;
-            Body body;
-
             renderTarget.Setup(App.renderer.spriteBatch);
 
             App.renderer.spriteBatch.Begin(
@@ -92,19 +101,64 @@ namespace BabelEngine4.ECS.Systems
                 effect: renderTarget.shader?.Raw
             );
 
-            // Draw sprites
-            foreach (ref readonly Entity entity in EntitiesWithSprites)
-            {
-                sprite = entity.Get<Sprite>();
+            renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
 
-                // Could definitely be more efficient :/
-                if(sprite.RenderTargetID != renderTarget.ID)
+            //*
+            // Draw maps
+            Span<TileMap> maps = App.world.Get<TileMap>();
+            foreach (ref readonly TileMap map in maps)
+            {
+                if (map.RenderTargetID != renderTarget.ID)
                 {
                     continue;
                 }
 
-                body = entity.Get<Body>();
+                Vector2 Position = new Vector2();
 
+                for (int Y = 0; Y < map.Dimensions.Y; Y++)
+                {
+                    for (int X = 0; X < map.Dimensions.X; X++)
+                    {
+                        int
+                            FrameID = X + (Y * map.Dimensions.X),
+                            Frame = map.Tiles[FrameID]
+                        ;
+
+                        Rectangle sourceRect = map.sheet.Meta.frames.Values.ElementAt(Frame).frame.ToRect();
+
+                        Position.X = X * sourceRect.Width;
+                        Position.Y = Y * sourceRect.Height;
+
+                        map.sheet.Draw(
+                            App.renderer.spriteBatch,
+                            Position,
+                            //map.Tiles[]
+                            sourceRect,
+                            Color.White,
+                            0,
+                            new Vector2(),
+                            new Vector2(1),
+                            SpriteEffects.None,
+                            map.LayerDepth
+                        );
+                    }
+                }
+            }
+
+            // Draw sprites
+            foreach (ref readonly Entity entity in EntitiesWithSprites)
+            {
+                ref Sprite sprite = ref entity.Get<Sprite>();
+
+                // Could definitely be more efficient :/
+                if (sprite.RenderTargetID != renderTarget.ID)
+                {
+                    continue;
+                }
+
+                ref Body body = ref entity.Get<Body>();
+
+                //*
                 sprite.sheet.Draw(
                     App.renderer.spriteBatch,
                     body.Position,
@@ -117,12 +171,13 @@ namespace BabelEngine4.ECS.Systems
                     sprite.Effect,
                     sprite.LayerDepth
                 );
+                //*/
             }
 
             // Draw text
             foreach (ref readonly Entity entity in EntitiesWithText)
             {
-                text = entity.Get<Text>();
+                ref Text text = ref entity.Get<Text>();
 
                 // Could definitely be more efficient :/
                 if (text.RenderTargetID != renderTarget.ID)
@@ -130,8 +185,9 @@ namespace BabelEngine4.ECS.Systems
                     continue;
                 }
 
-                body = entity.Get<Body>();
+                ref Body body = ref entity.Get<Body>();
 
+                //*
                 text.font.Draw(
                     App.renderer.spriteBatch,
                     text.Message,
@@ -143,7 +199,9 @@ namespace BabelEngine4.ECS.Systems
                     text.effect,
                     text.LayerDepth
                 );
+                //*/
             }
+            //*/
 
             App.renderer.spriteBatch.End();
         }

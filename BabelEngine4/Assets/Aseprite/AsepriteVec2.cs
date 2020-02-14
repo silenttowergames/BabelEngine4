@@ -8,6 +8,6 @@ namespace BabelEngine4.Assets.Aseprite
 {
     public struct AsepriteVec2
     {
-        float w, h;
+        public float w, h;
     }
 }

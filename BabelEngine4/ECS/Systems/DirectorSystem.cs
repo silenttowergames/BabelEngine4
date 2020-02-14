@@ -11,9 +11,16 @@ namespace BabelEngine4.ECS.Systems
 {
     public class DirectorSystem : IBabelSystem
     {
+        EntitySet EntitiesSet = null;
+
         public void Update()
         {
-            ReadOnlySpan<Entity> Entities = App.world.GetEntities().With<Director>().With<Body>().AsSet().GetEntities();
+            if (EntitiesSet == null)
+            {
+                EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
+            }
+
+            ReadOnlySpan<Entity> Entities = EntitiesSet.GetEntities();
 
             foreach (ref readonly Entity entity in Entities)
             {

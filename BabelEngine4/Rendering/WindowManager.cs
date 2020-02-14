@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BabelEngine4.ECS.Systems;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,6 +100,11 @@ namespace BabelEngine4.Rendering
                 App.renderer.graphics.PreferredBackBufferWidth = Size.X;
                 App.renderer.graphics.PreferredBackBufferHeight = Size.Y;
 
+                if (Fullscreen != App.renderer.graphics.IsFullScreen)
+                {
+                    App.renderer.graphics.ToggleFullScreen();
+                }
+
                 Point _Zoom = Size / App.renderer.resolution;
                 Zoom = (float)Math.Floor((float)Math.Min(_Zoom.X, _Zoom.Y));
 
@@ -108,6 +114,13 @@ namespace BabelEngine4.Rendering
                 {
                     renderTarget.Reset();
                 }
+
+                if (DrawSystem.primaryRenderTarget == null)
+                {
+                    DrawSystem.primaryRenderTarget = new RenderTarget(-1, App.renderer.resolution);
+                }
+
+                DrawSystem.primaryRenderTarget.Reset();
             }
         }
     }

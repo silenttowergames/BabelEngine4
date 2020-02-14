@@ -60,10 +60,35 @@ namespace BabelEngine4.Assets.Sprites
         {
             int FrameID = Animations[Animation].from + Frame;
 
+            Draw(
+                spriteBatch,
+                Position,
+                Meta.frames.Values.ElementAt(FrameID).frame.ToRect(),
+                color,
+                Rotation,
+                Origin,
+                Scale,
+                Effect,
+                LayerDepth
+            );
+        }
+
+        public void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 Position,
+            Rectangle sourceRect,
+            Color color,
+            float Rotation,
+            Vector2 Origin,
+            Vector2 Scale,
+            SpriteEffects Effect,
+            float LayerDepth
+        )
+        {
             spriteBatch.Draw(
                 Raw,
                 Position,
-                Meta.frames.Values.ElementAt(FrameID).frame.ToRect(),
+                sourceRect,
                 color,
                 Rotation,
                 Origin,
