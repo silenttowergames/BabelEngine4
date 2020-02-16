@@ -13,6 +13,8 @@ namespace BabelEngine4.ECS.Components.Rendering
     {
         public Color color;
 
+        public int LayerID;
+
         public float
             LayerDepth,
             Rotation
@@ -38,6 +40,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             Rotation = 0;
             effect = SpriteEffects.None;
             font = null;
+            LayerID = 0;
             RenderTargetID = 0;
             Message = _Message;
             Origin = new Vector2();

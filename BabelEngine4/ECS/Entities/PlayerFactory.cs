@@ -17,9 +17,9 @@ namespace BabelEngine4.ECS.Entities
         public void Create()
         {
             Entity e = App.world.CreateEntity();
-            e.Set(new Sprite(App.assets.sprite("8x8"), "Protag") { Effect = SpriteEffects.None, LayerDepth = 0.25f });
+            e.Set(new Sprite(App.assets.sprite("8x8"), "Protag") { Effect = SpriteEffects.None, LayerDepth = 0.25f, LayerID = 0 });
             e.Set(new CameraFollow() { RenderTargetID = 0 });
-            e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), font = App.assets.font("PressStart2P"), LayerDepth = 0.15f, Origin = new Vector2(8), Scale = new Vector2(2f) });
+            e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), font = App.assets.font("PressStart2P"), LayerDepth = 0.15f, LayerID = 1, Origin = new Vector2(8), Scale = new Vector2(2f) });
             e.Set(new Director());
             e.Set(new Body());
         }

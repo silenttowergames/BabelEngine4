@@ -27,6 +27,7 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public int
             Frame,
+            LayerID,
             RenderTargetID
         ;
 
@@ -51,6 +52,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             Effect = SpriteEffects.None;
             Origin = new Vector2();
             Scale = new Vector2(1);
+            LayerID = 0;
             LayerDepth = 0;
             Rotation = 0;
             RenderTargetID = 0;

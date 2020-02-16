@@ -13,7 +13,7 @@ namespace BabelEngine4.ECS.Systems
     {
         EntitySet EntitiesSet = null;
 
-        float Speed = 8;
+        float Speed = 0.5f;
 
         public DirectorSystem()
         {

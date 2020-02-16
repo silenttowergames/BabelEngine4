@@ -9,6 +9,8 @@ namespace BabelEngine4.Rendering
 {
     public struct Camera
     {
+        public bool MainCamera;
+
         public float
             Rotation,
             Zoom
@@ -26,6 +28,8 @@ namespace BabelEngine4.Rendering
             Matrix.CreateScale(new Vector3(Zoom, Zoom, 1))
             *
             Matrix.CreateTranslation(new Vector3())
+            *
+            Matrix.CreateScale(new Vector3(App.windowManager.Zoom, App.windowManager.Zoom, 1))
         );
     }
 }

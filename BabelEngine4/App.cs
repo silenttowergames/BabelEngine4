@@ -21,16 +21,14 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Scenes
-    // TODO: Spawner dictionary
-    // TODO: Menus
-    // TODO: SFX & Music
-    // TODO: Layers
+    // TODO: Optimize tile drawing
     // TODO: Tiled building
-    // TODO: A* pathfinding with tilemap
+    // TODO: Menus
     // TODO: Collisions
+    // TODO: SFX & Music
     // TODO: Saving; save states; config
     // TODO: Stress test
+    // TODO: A* pathfinding with tilemap
 
     public class App : Game
     {

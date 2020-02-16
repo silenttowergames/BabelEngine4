@@ -69,7 +69,7 @@ namespace BabelEngine4.Rendering
 
         public void Reset()
         {
-            renderTarget = new RenderTarget2D(App.renderer.graphics.GraphicsDevice, Resolution.X, Resolution.Y);
+            renderTarget = new RenderTarget2D(App.renderer.graphics.GraphicsDevice, (int)(Resolution.X * App.windowManager.Zoom), (int)(Resolution.Y * App.windowManager.Zoom));
         }
 
         public void Setup(SpriteBatch spriteBatch)
@@ -86,10 +86,10 @@ namespace BabelEngine4.Rendering
             if(_rect == null)
             {
                 rect = new Rectangle(
-                    Position.X,
-                    Position.Y,
-                    Size.X,
-                    Size.Y
+                    (int)(Position.X * App.windowManager.Zoom),
+                    (int)(Position.Y * App.windowManager.Zoom),
+                    (int)(Size.X * App.windowManager.Zoom),
+                    (int)(Size.Y * App.windowManager.Zoom)
                 );
             }
             else

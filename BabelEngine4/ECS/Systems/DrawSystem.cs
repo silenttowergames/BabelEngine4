@@ -23,7 +23,6 @@ namespace BabelEngine4.ECS.Systems
 
         public void Update()
         {
-            //*
             if (EntitySetWithSprites == null)
             {
                 EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
@@ -61,9 +60,7 @@ namespace BabelEngine4.ECS.Systems
 
             // Render the primary target
             App.renderer.graphics.GraphicsDevice.SetRenderTarget(null);
-            //*/
-
-            //*
+            
             App.renderer.graphics.GraphicsDevice.Clear(Color.Black);
 
             App.renderer.spriteBatch.Begin(
@@ -87,7 +84,6 @@ namespace BabelEngine4.ECS.Systems
             );
 
             App.renderer.spriteBatch.End();
-            //*/
         }
 
         void UseRenderTarget(RenderTarget renderTarget, ref ReadOnlySpan<Entity> EntitiesWithSprites, ref ReadOnlySpan<Entity> EntitiesWithText)
@@ -104,43 +100,75 @@ namespace BabelEngine4.ECS.Systems
 
             renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
 
-            //*
             // Draw maps
             Span<TileMap> maps = App.world.Get<TileMap>();
+            Vector2 MapPosition = new Vector2();
             foreach (ref readonly TileMap map in maps)
             {
+                // Could definitely be more efficient :/
                 if (map.RenderTargetID != renderTarget.ID)
                 {
                     continue;
                 }
 
-                Vector2 Position = new Vector2();
-
-                for (int Y = 0; Y < map.Dimensions.Y; Y++)
+                int X = 0, _X = 0, Y = 0, _Y = 0;
+                for (_Y = -1; _Y <= renderTarget.Resolution.Y / map.SizeEst.Y; _Y++)
                 {
-                    for (int X = 0; X < map.Dimensions.X; X++)
+                    Y = _Y + (int)Math.Floor(renderTarget.camera.Position.Y / map.SizeEst.Y);
+
+                    if (Y < 0)
                     {
+                        _Y -= Y + 1;
+
+                        continue;
+                    }
+
+                    if(Y >= map.Dimensions.Y)
+                    {
+                        break;
+                    }
+
+                    for (_X = -1; _X <= renderTarget.Resolution.X / map.SizeEst.X; _X++)
+                    {
+                        X = _X + (int)Math.Floor(renderTarget.camera.Position.X / map.SizeEst.X);
+
+                        if (X < 0)
+                        {
+                            _X -= X + 1;
+
+                            continue;
+                        }
+
+                        if (X >= map.Dimensions.X)
+                        {
+                            break;
+                        }
+
                         int
                             FrameID = X + (Y * map.Dimensions.X),
                             Frame = map.Tiles[FrameID]
                         ;
 
+                        if (Frame == -1)
+                        {
+                            continue;
+                        }
+
                         Rectangle sourceRect = map.sheet.Meta.frames.Values.ElementAt(Frame).frame.ToRect();
 
-                        Position.X = X * sourceRect.Width;
-                        Position.Y = Y * sourceRect.Height;
+                        MapPosition.X = X * sourceRect.Width;
+                        MapPosition.Y = Y * sourceRect.Height;
 
                         map.sheet.Draw(
                             App.renderer.spriteBatch,
-                            Position,
-                            //map.Tiles[]
+                            MapPosition,
                             sourceRect,
                             Color.White,
                             0,
                             new Vector2(),
                             new Vector2(1),
                             SpriteEffects.None,
-                            map.LayerDepth
+                            getLayerDepth(map.LayerDepth, map.LayerID)
                         );
                     }
                 }
@@ -159,7 +187,6 @@ namespace BabelEngine4.ECS.Systems
 
                 ref Body body = ref entity.Get<Body>();
 
-                //*
                 sprite.sheet.Draw(
                     App.renderer.spriteBatch,
                     body.Position,
@@ -170,9 +197,8 @@ namespace BabelEngine4.ECS.Systems
                     sprite.Origin,
                     sprite.Scale,
                     sprite.Effect,
-                    sprite.LayerDepth
+                    getLayerDepth(sprite.LayerDepth, sprite.LayerID)
                 );
-                //*/
             }
 
             // Draw text
@@ -188,7 +214,6 @@ namespace BabelEngine4.ECS.Systems
 
                 ref Body body = ref entity.Get<Body>();
 
-                //*
                 text.font.Draw(
                     App.renderer.spriteBatch,
                     text.Message,
@@ -198,13 +223,19 @@ namespace BabelEngine4.ECS.Systems
                     text.Origin,
                     text.Scale,
                     text.effect,
-                    text.LayerDepth
+                    getLayerDepth(text.LayerDepth, text.LayerID)
                 );
-                //*/
             }
-            //*/
 
             App.renderer.spriteBatch.End();
+        }
+
+        public static float getLayerDepth(float LayerDepth, float LayerID)
+        {
+            LayerID /= 100;
+            LayerDepth /= 100;
+
+            return LayerID + LayerDepth;
         }
     }
 }
