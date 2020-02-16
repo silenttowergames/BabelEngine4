@@ -13,13 +13,15 @@ namespace BabelEngine4.ECS.Systems
     {
         EntitySet EntitiesSet = null;
 
+        float Speed = 8;
+
+        public DirectorSystem()
+        {
+            EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
+        }
+
         public void Update()
         {
-            if (EntitiesSet == null)
-            {
-                EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
-            }
-
             ReadOnlySpan<Entity> Entities = EntitiesSet.GetEntities();
 
             foreach (ref readonly Entity entity in Entities)
@@ -29,22 +31,22 @@ namespace BabelEngine4.ECS.Systems
 
                 if (director.MoveRight)
                 {
-                    body.Velocity.X += 1;
+                    body.Velocity.X += Speed;
                 }
 
                 if (director.MoveLeft)
                 {
-                    body.Velocity.X -= 1;
+                    body.Velocity.X -= Speed;
                 }
 
                 if (director.MoveDown)
                 {
-                    body.Velocity.Y += 1;
+                    body.Velocity.Y += Speed;
                 }
 
                 if (director.MoveUp)
                 {
-                    body.Velocity.Y -= 1;
+                    body.Velocity.Y -= Speed;
                 }
             }
         }

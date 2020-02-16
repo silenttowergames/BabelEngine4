@@ -4,9 +4,11 @@ using BabelEngine4.Assets.Json;
 using BabelEngine4.Assets.Sprites;
 using BabelEngine4.ECS.Components;
 using BabelEngine4.ECS.Components.AI;
+using BabelEngine4.ECS.Entities;
 using BabelEngine4.ECS.Systems;
 using BabelEngine4.Input;
 using BabelEngine4.Rendering;
+using BabelEngine4.Scenes;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Cameras
+    // TODO: Scenes
     // TODO: Spawner dictionary
     // TODO: Menus
     // TODO: SFX & Music
@@ -35,6 +37,10 @@ namespace BabelEngine4
         // A few foolish globals
         public static AssetManager assets;
 
+        public static Dictionary<string, IEntityFactory> Factories = new Dictionary<string, IEntityFactory>();
+
+        public static Dictionary<string, IScene> Scenes = new Dictionary<string, IScene>();
+
         public static InputManager input;
 
         public static Renderer renderer;
@@ -49,6 +55,8 @@ namespace BabelEngine4
 
         public static bool DoExit = false;
 
+        public static IScene Scene = null;
+
         // Local vars
 
         string
@@ -57,7 +65,10 @@ namespace BabelEngine4
         ;
 
         public IBabelSystem[] systems;
+
         DrawSystem drawSystem = new DrawSystem();
+
+        EntitySet AllEntities = null;
 
         public App(string _Title, string _Version, Point Resolution, Point Size)
         {
@@ -104,9 +115,25 @@ namespace BabelEngine4
                 Exit();
             }
 
-            if(input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
+            if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 windowManager.Fullscreen = !windowManager.Fullscreen;
+            }
+
+            if (Scene != null)
+            {
+                if (AllEntities == null)
+                {
+                    AllEntities = world.GetEntities().AsSet();
+                }
+
+                foreach (ref readonly Entity e in AllEntities.GetEntities()) {
+                    e.Dispose();
+                }
+
+                Scene.Load();
+
+                Scene = null;
             }
 
             input.Update();
