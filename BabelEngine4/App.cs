@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Optimize tile drawing
+    // TODO: Compass for rotation
     // TODO: Tiled building
     // TODO: Menus
     // TODO: Collisions

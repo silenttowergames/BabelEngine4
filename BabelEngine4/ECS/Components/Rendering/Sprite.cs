@@ -33,6 +33,7 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public float
             LayerDepth,
+            Parallax,
             Rotation
         ;
 
@@ -53,9 +54,10 @@ namespace BabelEngine4.ECS.Components.Rendering
             Origin = new Vector2();
             Scale = new Vector2(1);
             LayerID = 0;
-            LayerDepth = 0;
-            Rotation = 0;
+            LayerDepth = 0f;
+            Rotation = 0f;
             RenderTargetID = 0;
+            Parallax = 1f;
         }
 
         public void SetAnimation(string _AnimationID)

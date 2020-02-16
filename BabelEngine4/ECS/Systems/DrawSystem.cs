@@ -100,9 +100,11 @@ namespace BabelEngine4.ECS.Systems
 
             renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
 
+            // Allocating position for all things drawn
+            Vector2 Position = new Vector2();
+
             // Draw maps
             Span<TileMap> maps = App.world.Get<TileMap>();
-            Vector2 MapPosition = new Vector2();
             foreach (ref readonly TileMap map in maps)
             {
                 // Could definitely be more efficient :/
@@ -156,12 +158,12 @@ namespace BabelEngine4.ECS.Systems
 
                         Rectangle sourceRect = map.sheet.Meta.frames.Values.ElementAt(Frame).frame.ToRect();
 
-                        MapPosition.X = X * sourceRect.Width;
-                        MapPosition.Y = Y * sourceRect.Height;
+                        Position.X = X * sourceRect.Width;
+                        Position.Y = Y * sourceRect.Height;
 
                         map.sheet.Draw(
                             App.renderer.spriteBatch,
-                            MapPosition,
+                            Position,
                             sourceRect,
                             Color.White,
                             0,
@@ -187,9 +189,11 @@ namespace BabelEngine4.ECS.Systems
 
                 ref Body body = ref entity.Get<Body>();
 
+                Position = body.Position + (renderTarget.camera.Position * (1 - sprite.Parallax));
+
                 sprite.sheet.Draw(
                     App.renderer.spriteBatch,
-                    body.Position,
+                    Position,
                     sprite.AnimationID,
                     sprite.Frame,
                     sprite.color,
@@ -214,10 +218,12 @@ namespace BabelEngine4.ECS.Systems
 
                 ref Body body = ref entity.Get<Body>();
 
+                Position = body.Position + (renderTarget.camera.Position * (1 - text.Parallax));
+
                 text.font.Draw(
                     App.renderer.spriteBatch,
                     text.Message,
-                    body.Position,
+                    Position,
                     text.color,
                     text.Rotation,
                     text.Origin,

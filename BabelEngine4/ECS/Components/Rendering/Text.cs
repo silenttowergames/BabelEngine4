@@ -17,6 +17,7 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public float
             LayerDepth,
+            Parallax,
             Rotation
         ;
 
@@ -36,8 +37,8 @@ namespace BabelEngine4.ECS.Components.Rendering
         public Text(string _Message)
         {
             color = Color.Black;
-            LayerDepth = 0;
-            Rotation = 0;
+            LayerDepth = 0f;
+            Rotation = 0f;
             effect = SpriteEffects.None;
             font = null;
             LayerID = 0;
@@ -45,6 +46,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             Message = _Message;
             Origin = new Vector2();
             Scale = new Vector2(1);
+            Parallax = 1f;
         }
     }
 }
