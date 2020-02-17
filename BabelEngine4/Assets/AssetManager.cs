@@ -1,6 +1,7 @@
 ﻿using BabelEngine4.Assets.Fonts;
 using BabelEngine4.Assets.Shaders;
 using BabelEngine4.Assets.Sprites;
+using BabelEngine4.Assets.Tiled;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -17,6 +18,8 @@ namespace BabelEngine4.Assets
 
         Dictionary<string, Font> fonts = new Dictionary<string, Font>();
 
+        Dictionary<string, Map> maps = new Dictionary<string, Map>();
+
         Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
 
         Dictionary<string, SpriteSheet> sprites = new Dictionary<string, SpriteSheet>();
@@ -31,6 +34,7 @@ namespace BabelEngine4.Assets
         public void Load()
         {
             load<Font, SpriteFont>(fonts);
+            load<Map, TiledMapContainer>(maps);
             load<Shader, Effect>(shaders);
             load<SpriteSheet, Texture2D>(sprites);
         }
@@ -66,6 +70,11 @@ namespace BabelEngine4.Assets
             add<Font, SpriteFont>(fonts, _fonts);
         }
 
+        public void addMaps(params Map[] _maps)
+        {
+            add<Map, TiledMapContainer>(maps, _maps);
+        }
+
         public void addShaders(params Shader[] _shader)
         {
             add<Shader, Effect>(shaders, _shader);
@@ -79,6 +88,11 @@ namespace BabelEngine4.Assets
         public Font font(string Filename)
         {
             return get<Font, SpriteFont>(fonts, Filename);
+        }
+
+        public Map map(string Filename)
+        {
+            return get<Map, TiledMapContainer>(maps, Filename);
         }
 
         public Shader shader(string Filename)

@@ -22,14 +22,13 @@ using System.Threading.Tasks;
 namespace BabelEngine4
 {
     // TODO: Compass for rotation
-    // TODO: Tiled building
     // TODO: Menus
     // TODO: Collisions
     // TODO: SFX & Music
     // TODO: Saving; save states; config
     // TODO: Stress test
     // TODO: A* pathfinding with tilemap
-
+    
     public class App : Game
     {
         // A few foolish globals
@@ -125,13 +124,16 @@ namespace BabelEngine4
                     AllEntities = world.GetEntities().AsSet();
                 }
 
-                foreach (ref readonly Entity e in AllEntities.GetEntities()) {
+                foreach (ref readonly Entity e in AllEntities.GetEntities())
+                {
                     e.Dispose();
                 }
 
                 Scene.Load();
 
                 Scene = null;
+
+                GC.Collect();
             }
 
             input.Update();

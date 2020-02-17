@@ -18,6 +18,20 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public int[] Tiles;
 
+        public string Data
+        {
+            set
+            {
+                string[] Cols = value.Split(',');
+                Tiles = new int[Cols.Length];
+
+                for (int i = 0; i < Cols.Length; i++)
+                {
+                    Tiles[i] = int.Parse(Cols[i]) - 1;
+                }
+            }
+        }
+
         Point sizeEst;
 
         public Point SizeEst

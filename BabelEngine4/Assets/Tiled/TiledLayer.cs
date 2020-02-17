@@ -11,13 +11,6 @@ namespace BabelEngine4.Assets.Tiled
     [XmlInclude(typeof(TiledLayerImage))]
     public class TiledLayer
     {
-        public TiledLayer()
-        {
-            LayerDepth = ++App.LayerIDCounter;
-        }
-
-        public int LayerDepth = 0;
-
         [XmlAttribute(AttributeName = "id")]
         public int ID;
 

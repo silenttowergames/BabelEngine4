@@ -35,7 +35,7 @@ namespace BabelEngine4.Assets.Tiled
 
                 map = (TiledMap)XS.Deserialize(reader);
 
-                XmlSerializer TS = new XmlSerializer(typeof(TiledTileset));
+                //XmlSerializer TS = new XmlSerializer(typeof(TiledTileset));
             }
         }
     }

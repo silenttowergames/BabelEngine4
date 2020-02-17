@@ -1,4 +1,5 @@
-﻿using BabelEngine4.ECS.Components.Rendering;
+﻿using BabelEngine4.Assets.Tiled;
+using BabelEngine4.ECS.Components.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
 using System;
@@ -11,7 +12,7 @@ namespace BabelEngine4.ECS.Entities
 {
     public class TestMapFactory : IEntityFactory
     {
-        public void Create()
+        public void Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
         {
             Entity m = App.world.CreateEntity();
             m.Set(new TileMap()

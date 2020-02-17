@@ -46,8 +46,6 @@ namespace BabelEngine4.Assets.Tiled
         [XmlArrayItem("property")]
         public List<TiledProperty> properties;
 
-        //public Dictionary<string, string> propertiesDictionary = new Dictionary<string, string>();
-
         [XmlElement(ElementName = "tileset")]
         public TiledTileset tileset;
 

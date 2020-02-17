@@ -113,8 +113,10 @@ namespace BabelEngine4.ECS.Systems
                     continue;
                 }
 
+                float LayerDepth = getLayerDepth(map.LayerDepth, map.LayerID);
+
                 int X = 0, _X = 0, Y = 0, _Y = 0;
-                for (_Y = -1; _Y <= renderTarget.Resolution.Y / map.SizeEst.Y; _Y++)
+                for (_Y = -1; _Y <= (renderTarget.Resolution.Y / map.SizeEst.Y) + 1; _Y++)
                 {
                     Y = _Y + (int)Math.Floor(renderTarget.camera.Position.Y / map.SizeEst.Y);
 
@@ -170,7 +172,7 @@ namespace BabelEngine4.ECS.Systems
                             new Vector2(),
                             new Vector2(1),
                             SpriteEffects.None,
-                            getLayerDepth(map.LayerDepth, map.LayerID)
+                            LayerDepth
                         );
                     }
                 }
@@ -239,7 +241,7 @@ namespace BabelEngine4.ECS.Systems
         public static float getLayerDepth(float LayerDepth, float LayerID)
         {
             LayerID /= 100;
-            LayerDepth /= 100;
+            LayerDepth /= 1000;
 
             return LayerID + LayerDepth;
         }
