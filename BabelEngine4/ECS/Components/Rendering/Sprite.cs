@@ -15,6 +15,8 @@ namespace BabelEngine4.ECS.Components.Rendering
     {
         public Color color;
 
+        public Compass compass;
+
         public SpriteSheet sheet;
 
         public string AnimationID
@@ -33,8 +35,7 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public float
             LayerDepth,
-            Parallax,
-            Rotation
+            Parallax
         ;
 
         public Ticker animationTicker;
@@ -51,11 +52,11 @@ namespace BabelEngine4.ECS.Components.Rendering
             animationTicker = new Ticker();
             sheet = _sheet;
             Effect = SpriteEffects.None;
-            Origin = new Vector2();
+            Origin = new Vector2(sheet.SizeEst.X / 2, sheet.SizeEst.Y / 2);
             Scale = new Vector2(1);
             LayerID = 0;
             LayerDepth = 0f;
-            Rotation = 0f;
+            compass = new Compass();
             RenderTargetID = 0;
             Parallax = 1f;
         }

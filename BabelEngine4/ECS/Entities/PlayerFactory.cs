@@ -2,6 +2,7 @@
 using BabelEngine4.ECS.Components;
 using BabelEngine4.ECS.Components.AI;
 using BabelEngine4.ECS.Components.Rendering;
+using BabelEngine4.Misc;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

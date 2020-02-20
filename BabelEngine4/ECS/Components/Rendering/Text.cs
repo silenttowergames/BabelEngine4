@@ -1,4 +1,5 @@
 ﻿using BabelEngine4.Assets.Fonts;
+using BabelEngine4.Misc;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,12 +14,13 @@ namespace BabelEngine4.ECS.Components.Rendering
     {
         public Color color;
 
+        public Compass compass;
+
         public int LayerID;
 
         public float
             LayerDepth,
-            Parallax,
-            Rotation
+            Parallax
         ;
 
         public Font font;
@@ -38,7 +40,7 @@ namespace BabelEngine4.ECS.Components.Rendering
         {
             color = Color.Black;
             LayerDepth = 0f;
-            Rotation = 0f;
+            compass = new Compass();
             effect = SpriteEffects.None;
             font = null;
             LayerID = 0;

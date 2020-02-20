@@ -18,6 +18,21 @@ namespace BabelEngine4.Assets.Sprites
 
         Dictionary<string, AsepriteAnimation> Animations = new Dictionary<string, AsepriteAnimation>();
 
+        Point sizeEst;
+
+        public Point SizeEst
+        {
+            get
+            {
+                if (sizeEst.X == 0)
+                {
+                    sizeEst = new Point(Meta.frames.Values.ElementAt(0).frame.w, Meta.frames.Values.ElementAt(0).frame.h);
+                }
+
+                return sizeEst;
+            }
+        }
+
         public SpriteSheet(string _Filename) : base(_Filename)
         {
         }

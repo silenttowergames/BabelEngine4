@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Compass for rotation
     // TODO: Menus
     // TODO: Collisions
     // TODO: SFX & Music
