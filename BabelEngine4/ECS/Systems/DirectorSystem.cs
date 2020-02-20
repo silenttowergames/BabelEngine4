@@ -1,5 +1,6 @@
 ﻿using BabelEngine4.ECS.Components;
 using BabelEngine4.ECS.Components.AI;
+using BabelEngine4.ECS.Components.Rendering;
 using DefaultEcs;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace BabelEngine4.ECS.Systems
             {
                 ref Director director = ref entity.Get<Director>();
                 ref Body body = ref entity.Get<Body>();
+                ref Sprite sprite = ref entity.Get<Sprite>();
+
+                sprite.compass.TurnTowards(body.Position, new Microsoft.Xna.Framework.Vector2(64));
 
                 if (director.MoveRight)
                 {
