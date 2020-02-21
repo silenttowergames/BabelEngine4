@@ -16,11 +16,6 @@ namespace BabelEngine4.ECS.Systems
 
         float Speed = 0.5f;
 
-        public DirectorSystem()
-        {
-            EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
-        }
-
         public void Update()
         {
             ReadOnlySpan<Entity> Entities = EntitiesSet.GetEntities();
@@ -29,9 +24,6 @@ namespace BabelEngine4.ECS.Systems
             {
                 ref Director director = ref entity.Get<Director>();
                 ref Body body = ref entity.Get<Body>();
-                ref Sprite sprite = ref entity.Get<Sprite>();
-
-                sprite.compass.TurnTowards(body.Position, new Microsoft.Xna.Framework.Vector2(64));
 
                 if (director.MoveRight)
                 {
@@ -53,6 +45,11 @@ namespace BabelEngine4.ECS.Systems
                     body.Velocity.Y -= Speed;
                 }
             }
+        }
+
+        public void Reset()
+        {
+            EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
         }
     }
 }

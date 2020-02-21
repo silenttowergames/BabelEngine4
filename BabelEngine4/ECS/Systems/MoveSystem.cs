@@ -10,6 +10,11 @@ namespace BabelEngine4.ECS.Systems
 {
     public class MoveSystem : IBabelSystem
     {
+        public void Reset()
+        {
+            // nothing
+        }
+
         public void Update()
         {
             Span<Body> bodies = App.world.Get<Body>();

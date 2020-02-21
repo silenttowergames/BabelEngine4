@@ -21,18 +21,14 @@ namespace BabelEngine4.ECS.Systems
 
         public static RenderTarget primaryRenderTarget = null;
 
+        public void Reset()
+        {
+            EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
+            EntitySetWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet();
+        }
+
         public void Update()
         {
-            if (EntitySetWithSprites == null)
-            {
-                EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
-            }
-
-            if (EntitySetWithText == null)
-            {
-                EntitySetWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet();
-            }
-
             ReadOnlySpan<Entity> EntitiesWithSprites = EntitySetWithSprites.GetEntities();
             ReadOnlySpan<Entity> EntitiesWithText = EntitySetWithText.GetEntities();
 

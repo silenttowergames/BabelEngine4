@@ -24,5 +24,10 @@ namespace BabelEngine4.ECS.Systems
                 director.MoveUp = App.input.keyboard.Held(Keys.Up) || App.input.gamepad1.Down(Buttons.DPadUp) || App.input.gamepad1.Down(Buttons.LeftThumbstickUp);
             }
         }
+
+        public void Reset()
+        {
+            // nothing
+        }
     }
 }

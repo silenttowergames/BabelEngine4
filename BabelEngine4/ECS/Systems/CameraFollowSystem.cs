@@ -10,12 +10,7 @@ namespace BabelEngine4.ECS.Systems
 {
     public class CameraFollowSystem : IBabelSystem
     {
-        EntitySet Set;
-
-        public CameraFollowSystem()
-        {
-            Set = App.world.GetEntities().With<Body>().With<CameraFollow>().AsSet();
-        }
+        EntitySet Set = null;
 
         public void Update()
         {
@@ -26,6 +21,11 @@ namespace BabelEngine4.ECS.Systems
 
                 App.renderTargets[camFollow.RenderTargetID].Center(body.Position);
             }
+        }
+
+        public void Reset()
+        {
+            Set = App.world.GetEntities().With<Body>().With<CameraFollow>().AsSet();
         }
     }
 }

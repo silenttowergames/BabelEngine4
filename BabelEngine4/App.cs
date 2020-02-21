@@ -64,8 +64,6 @@ namespace BabelEngine4
 
         DrawSystem drawSystem = new DrawSystem();
 
-        EntitySet AllEntities = null;
-
         public App(string _Title, string _Version, Point Resolution, Point Size)
         {
             Title = _Title;
@@ -118,14 +116,15 @@ namespace BabelEngine4
 
             if (Scene != null)
             {
-                if (AllEntities == null)
-                {
-                    AllEntities = world.GetEntities().AsSet();
-                }
+                world?.Dispose();
 
-                foreach (ref readonly Entity e in AllEntities.GetEntities())
+                world = new World();
+
+                drawSystem.Reset();
+
+                for (int i = 0; i < systems.Length; i++)
                 {
-                    e.Dispose();
+                    systems[i].Reset();
                 }
 
                 Scene.Load();

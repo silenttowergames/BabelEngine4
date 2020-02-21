@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelEngine4.ECS.Systems
+namespace BabelEngine4.ECS.Components.Menus
 {
-    public interface IBabelSystem
+    public struct Menu
     {
-        void Update();
-        void Reset();
+        public int SelectedID;
     }
 }

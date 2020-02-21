@@ -18,8 +18,8 @@ namespace BabelEngine4.ECS.Entities
         {
             Entity f = App.world.CreateEntity();
             f.Set(new Sprite(App.assets.sprite("8x8"), "Coin Light") { Effect = SpriteEffects.None, LayerID = LayerID, LayerDepth = LayerDepth, RenderTargetID = 1, Parallax = Parallax });
-            f.Set(new Text("Coin") { font = App.assets.font("PressStart2P"), LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(-12, 0), color = Color.White, RenderTargetID = 1, Parallax = Parallax });
-            f.Set(new Body() { Position = new Vector2(4) });
+            f.Set(new Text("Coin") { font = App.assets.font("PressStart2P"), LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(-8, 4), color = Color.White, RenderTargetID = 1, Parallax = Parallax });
+            f.Set(new Body() { Position = new Vector2(8) });
         }
     }
 }

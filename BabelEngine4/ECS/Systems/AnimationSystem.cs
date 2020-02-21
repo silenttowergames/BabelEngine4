@@ -28,5 +28,10 @@ namespace BabelEngine4.ECS.Systems
                 }
             }
         }
+
+        public void Reset()
+        {
+            // nothing
+        }
     }
 }

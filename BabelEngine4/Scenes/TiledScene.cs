@@ -19,6 +19,8 @@ namespace BabelEngine4.Scenes
         public void Load()
         {
             map.Generate();
+
+            App.Factories["menu"].Create(1, 3, 0);
         }
     }
 }

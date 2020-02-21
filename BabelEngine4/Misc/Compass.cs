@@ -52,7 +52,7 @@ namespace BabelEngine4.Misc
 
         public static float Face(Vector2 PosA, Vector2 PosB)
         {
-            return RealToRotation((float)Math.Atan2(PosA.Y - PosB.Y, PosA.X - PosB.X));
+            return RealToRotation((float)Math.Atan2(PosA.Y - PosB.Y, PosA.X - PosB.X)) - 90;
         }
 
         public static float RotationToReal(float _Rotation)
