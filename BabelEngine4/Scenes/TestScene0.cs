@@ -13,7 +13,7 @@ namespace BabelEngine4.Scenes
             App.Factories["player"].Create(0, 1, 1);
             App.Factories["hud"].Create(0, 0, 1);
             App.Factories["tilemap-test"].Create(0, 0, 1);
-            //App.Factories["menu"].Create(1, 3, 0);
+            App.Factories["menu"].Create(1, 3, 0);
         }
     }
 }

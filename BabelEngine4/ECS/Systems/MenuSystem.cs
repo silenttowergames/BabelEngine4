@@ -60,25 +60,30 @@ namespace BabelEngine4.ECS.Systems
                     ref MenuItem menuItem = ref _menuItem.Get<MenuItem>();
                     bool ToChange = menuItem.State == MenuItem.MenuItemState.Unset || i == SelectedIDReal;
 
+                    menuItem.Selected = false;
+
                     if (i == SelectedIDReal)
                     {
                         if (ToChange)
                         {
-                            menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Hover);
+                            //menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Hover);
+                            menuItem.State = MenuItem.MenuItemState.Hover;
                         }
 
-                        menuItem.Active?.Invoke();
+                        //menuItem.Active?.Invoke();
 
                         if (App.input.keyboard.Pressed(Keys.Enter))
                         {
-                            menuItem.Select?.Invoke();
+                            //menuItem.Select?.Invoke();
+                            menuItem.Selected = true;
                         }
                     }
                     else
                     {
                         if (ToChange)
                         {
-                            menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Blur);
+                            //menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Blur);
+                            menuItem.State = MenuItem.MenuItemState.Blur;
                         }
                     }
 

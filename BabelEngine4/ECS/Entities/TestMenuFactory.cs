@@ -27,54 +27,16 @@ namespace BabelEngine4.ECS.Entities
             Entity menuItemHello = App.world.CreateEntity();
             menuItemHello.Set(new Body());
             menuItemHello.Set(new Text(menuItemHelloStr) { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
-            menuItemHello.Set(new MenuItem()
-            {
-                OnChangeState = menuItemOnStateChange,
-                Select = menuItemHelloSelect
-            });
+            menuItemHello.Set(new MenuItem());
+            menuItemHello.Set(new MenuItemSelectGoToScene() { SceneID = "testscene0" });
             menu.SetAsParentOf(menuItemHello);
 
             Entity menuItemGoodbye = App.world.CreateEntity();
             menuItemGoodbye.Set(new Body() { Position = new Vector2(0, 10) });
             menuItemGoodbye.Set(new Text(menuItemGoodbyeStr) { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
-            menuItemGoodbye.Set(new MenuItem()
-            {
-                OnChangeState = menuItemOnStateChange,
-                Select = menuItemGoodbyeSelect
-            });
+            menuItemGoodbye.Set(new MenuItem());
+            menuItemGoodbye.Set(new MenuItemSelectGoToScene() { SceneID = "mapscene" });
             menu.SetAsParentOf(menuItemGoodbye);
-        }
-
-        static void menuItemHelloSelect()
-        {
-            App.Scene = App.Scenes["testscene0"];
-        }
-
-        static void menuItemGoodbyeSelect()
-        {
-            App.Scene = App.Scenes["mapscene"];
-        }
-
-        static void menuItemOnStateChange(Entity _menuItem, MenuItem.MenuItemState State)
-        {
-            ref Text text = ref _menuItem.Get<Text>();
-
-            switch (State)
-            {
-                case MenuItem.MenuItemState.Blur:
-                    {
-                        text.color = Color.Gray;
-
-                        break;
-                    }
-
-                case MenuItem.MenuItemState.Hover:
-                    {
-                        text.color = Color.Red;
-
-                        break;
-                    }
-            }
         }
     }
 }

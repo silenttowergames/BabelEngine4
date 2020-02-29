@@ -16,13 +16,8 @@ namespace BabelEngine4.ECS.Components.Menus
             Hover,
         }
 
-        public Action
-            Active,
-            Select
-        ;
-
-        public Action<Entity, MenuItemState> OnChangeState;
-
         public MenuItemState State;
+
+        public bool Selected;
     }
 }

@@ -58,16 +58,16 @@ namespace BabelEngine4
 
         public static Config config = null;
 
+        static ISerializer serializer = new TextSerializer();
+
+        static string saveState = null;
+
         // Local vars
 
         string
             Title,
             Version
         ;
-
-        string saveState = null;
-
-        ISerializer serializer = new TextSerializer();
 
         public IBabelSystem[] systems;
 
@@ -134,12 +134,7 @@ namespace BabelEngine4
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))
             {
-                using (Stream stream = File.Create("savestate"))
-                {
-                    serializer.Serialize(stream, world);
-                }
-
-                GC.Collect();
+                StateSave();
             }
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.L))
@@ -191,6 +186,32 @@ namespace BabelEngine4
             drawSystem.Update();
 
             base.Draw(gameTime);
+        }
+
+        public static void StateSave()
+        {
+            //*
+            using (Stream stream = File.Create("savestate"))
+            {
+                serializer.Serialize(stream, world);
+            }
+            //*/
+
+            /*
+            using (Stream stream = new MemoryStream())
+            {
+                serializer.Serialize(stream, world);
+
+                StreamReader reader = new StreamReader(stream);
+            }
+            //*/
+
+            GC.Collect();
+        }
+
+        public static void StateLoad()
+        {
+            //
         }
     }
 }
