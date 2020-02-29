@@ -49,6 +49,14 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public Point Dimensions;
 
-        public SpriteSheet sheet;
+        public string spriteSheet;
+
+        public SpriteSheet sheet
+        {
+            get
+            {
+                return App.assets.sprite(spriteSheet);
+            }
+        }
     }
 }

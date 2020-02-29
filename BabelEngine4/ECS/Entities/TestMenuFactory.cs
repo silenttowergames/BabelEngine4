@@ -26,7 +26,7 @@ namespace BabelEngine4.ECS.Entities
 
             Entity menuItemHello = App.world.CreateEntity();
             menuItemHello.Set(new Body());
-            menuItemHello.Set(new Text(menuItemHelloStr) { color = new Color(40, 30, 255), font = App.assets.font("PressStart2P"), LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
+            menuItemHello.Set(new Text(menuItemHelloStr) { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
             menuItemHello.Set(new MenuItem()
             {
                 OnChangeState = menuItemOnStateChange,
@@ -36,7 +36,7 @@ namespace BabelEngine4.ECS.Entities
 
             Entity menuItemGoodbye = App.world.CreateEntity();
             menuItemGoodbye.Set(new Body() { Position = new Vector2(0, 10) });
-            menuItemGoodbye.Set(new Text(menuItemGoodbyeStr) { color = new Color(40, 30, 255), font = App.assets.font("PressStart2P"), LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
+            menuItemGoodbye.Set(new Text(menuItemGoodbyeStr) { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
             menuItemGoodbye.Set(new MenuItem()
             {
                 OnChangeState = menuItemOnStateChange,

@@ -39,7 +39,7 @@ namespace BabelEngine4.Assets.Tiled
                         layer.height
                     ),
                     LayerID = layer.ID,
-                    sheet = App.assets.sprite(Raw.map.tileset.name),
+                    spriteSheet = Raw.map.tileset.name,
                     LayerDepth = 1
                 });
             }

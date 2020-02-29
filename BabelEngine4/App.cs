@@ -11,11 +11,13 @@ using BabelEngine4.Rendering;
 using BabelEngine4.Saving;
 using BabelEngine4.Scenes;
 using DefaultEcs;
+using DefaultEcs.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,6 +64,10 @@ namespace BabelEngine4
             Title,
             Version
         ;
+
+        string saveState = null;
+
+        ISerializer serializer = new TextSerializer();
 
         public IBabelSystem[] systems;
 
@@ -124,6 +130,28 @@ namespace BabelEngine4
             if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 windowManager.Fullscreen = !windowManager.Fullscreen;
+            }
+
+            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))
+            {
+                using (Stream stream = File.Create("savestate"))
+                {
+                    serializer.Serialize(stream, world);
+                }
+
+                GC.Collect();
+            }
+
+            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.L))
+            {
+                world.Dispose();
+
+                using (Stream stream = File.OpenRead("savestate"))
+                {
+                    world = serializer.Deserialize(stream);
+                }
+
+                GC.Collect();
             }
 
             if (Scene != null)

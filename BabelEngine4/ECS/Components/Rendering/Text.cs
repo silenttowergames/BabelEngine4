@@ -23,7 +23,15 @@ namespace BabelEngine4.ECS.Components.Rendering
             Parallax
         ;
 
-        public Font font;
+        public string spriteFont;
+
+        public Font font
+        {
+            get
+            {
+                return App.assets.font(spriteFont);
+            }
+        }
 
         public int RenderTargetID;
 
@@ -42,7 +50,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             LayerDepth = 0f;
             compass = new Compass();
             effect = SpriteEffects.None;
-            font = null;
+            spriteFont = null;
             LayerID = 0;
             RenderTargetID = 0;
             Message = _Message;

@@ -17,12 +17,30 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public Compass compass;
 
-        public SpriteSheet sheet;
+        string spriteSheet;
+
+        public SpriteSheet sheet
+        {
+            get
+            {
+                return App.assets.sprite(spriteSheet);
+            }
+        }
+
+        string animationID;
 
         public string AnimationID
         {
-            get;
-            private set;
+            get
+            {
+                return animationID;
+            }
+
+            set
+            {
+                animationID = value;
+                Frame = 0;
+            }
         }
 
         public SpriteEffects Effect;
@@ -44,27 +62,21 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public AsepriteAnimation Animation => sheet.GetAnimation(AnimationID);
 
-        public Sprite(SpriteSheet _sheet, string _AnimationID)
+        public Sprite(string _sheet, string _AnimationID)
         {
-            AnimationID = _AnimationID;
+            animationID = _AnimationID;
             color = Color.White;
             Frame = 0;
             animationTicker = new Ticker();
-            sheet = _sheet;
+            spriteSheet = _sheet;
             Effect = SpriteEffects.None;
-            Origin = new Vector2(sheet.SizeEst.X / 2, sheet.SizeEst.Y / 2);
             Scale = new Vector2(1);
             LayerID = 0;
             LayerDepth = 0f;
             compass = new Compass();
             RenderTargetID = 0;
             Parallax = 1f;
-        }
-
-        public void SetAnimation(string _AnimationID)
-        {
-            AnimationID = _AnimationID;
-            Frame = 0;
+            Origin = new Vector2(App.assets.sprite(spriteSheet).SizeEst.X / 2, App.assets.sprite(spriteSheet).SizeEst.Y / 2);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace BabelEngine4.ECS.Entities
             Entity m = App.world.CreateEntity();
             m.Set(new TileMap()
             {
-                sheet = App.assets.sprite("8x8"),
+                spriteSheet = "8x8",
                 Dimensions = new Point(8, 4),
                 Tiles = new int[] {
                     2, 2, 2, 2, 2, 2, 2, 2,
