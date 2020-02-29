@@ -126,16 +126,6 @@ namespace BabelEngine4
                 windowManager.Fullscreen = !windowManager.Fullscreen;
             }
 
-            if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.A))
-            {
-                App.windowManager.WindowSize = new Point(640, 480);
-            }
-
-            if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.S))
-            {
-                config.Save();
-            }
-
             if (Scene != null)
             {
                 world?.Dispose();

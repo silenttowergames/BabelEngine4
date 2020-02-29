@@ -19,7 +19,9 @@ namespace BabelEngine4.Saving
 
         string filename;
 
-        public Config(string _Filename)
+        public Config() { }
+
+        public Config(string _Filename = null)
         {
             filename = _Filename;
         }

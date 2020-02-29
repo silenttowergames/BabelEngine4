@@ -14,13 +14,23 @@ namespace BabelEngine4.Saving
             return System.IO.File.ReadAllText(Filename);
         }
 
-        public static T Load<T>(string Filename) where T : IStorable
+        public static T Load<T>(string Filename) where T : IStorable, new()
         {
-            T obj = JsonConvert.DeserializeObject<T>(Load(Filename));
+            T obj;
 
-            obj.Filename(Filename);
+            if (System.IO.File.Exists(Filename))
+            {
+                obj = JsonConvert.DeserializeObject<T>(Load(Filename));
 
-            obj.OnLoad();
+                obj.Filename(Filename);
+
+                obj.OnLoad();
+            }
+            else
+            {
+                obj = new T();
+                obj.Filename(Filename);
+            }
 
             return obj;
         }
