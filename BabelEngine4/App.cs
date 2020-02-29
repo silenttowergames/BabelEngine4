@@ -8,6 +8,7 @@ using BabelEngine4.ECS.Entities;
 using BabelEngine4.ECS.Systems;
 using BabelEngine4.Input;
 using BabelEngine4.Rendering;
+using BabelEngine4.Saving;
 using BabelEngine4.Scenes;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
@@ -21,12 +22,12 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Menus
     // TODO: Collisions
     // TODO: SFX & Music
     // TODO: Saving; save states; config
     // TODO: Stress test
     // TODO: A* pathfinding with tilemap
+    // TODO: Menus finalized (only usable when active; only one active at a time)
     
     public class App : Game
     {
@@ -52,6 +53,8 @@ namespace BabelEngine4
         public static bool DoExit = false;
 
         public static IScene Scene = null;
+
+        public static Config config = null;
 
         // Local vars
 
@@ -84,11 +87,15 @@ namespace BabelEngine4
             };
 
             assets = new AssetManager(Content);
+
+            config = Storage.Load<Config>("config.dat");
         }
 
         protected override void Initialize()
         {
             Window.Title = $"{Title} {Version}";
+
+            config.OnLoad();
 
             base.Initialize();
         }
@@ -102,6 +109,11 @@ namespace BabelEngine4
             base.LoadContent();
         }
 
+        protected override void UnloadContent()
+        {
+            config.Save();
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (DoExit)
@@ -112,6 +124,16 @@ namespace BabelEngine4
             if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 windowManager.Fullscreen = !windowManager.Fullscreen;
+            }
+
+            if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.A))
+            {
+                App.windowManager.WindowSize = new Point(640, 480);
+            }
+
+            if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.S))
+            {
+                config.Save();
             }
 
             if (Scene != null)
