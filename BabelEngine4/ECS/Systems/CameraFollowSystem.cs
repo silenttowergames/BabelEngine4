@@ -27,5 +27,10 @@ namespace BabelEngine4.ECS.Systems
         {
             Set = App.world.GetEntities().With<Body>().With<CameraFollow>().AsSet();
         }
+
+        public void OnLoad()
+        {
+            // nothing
+        }
     }
 }

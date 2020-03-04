@@ -20,8 +20,8 @@ namespace BabelEngine4.ECS.Entities
         {
             Entity e = App.world.CreateEntity();
             e.Set(new Sprite("8x8", "Protag") { Effect = SpriteEffects.None, LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
-            e.Set(new CameraFollow() { RenderTargetID = 0 });
-            //e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), font = App.assets.font("PressStart2P"), LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(2f) });
+            //e.Set(new CameraFollow() { RenderTargetID = 0 });
+            //e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(2f) });
             e.Set(new Director());
             e.Set(new Body());
         }

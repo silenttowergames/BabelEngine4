@@ -1,4 +1,5 @@
 ﻿using BabelEngine4.ECS.Components.Menus;
+using BabelEngine4.ECS.Components.Rendering;
 using DefaultEcs;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -11,16 +12,75 @@ namespace BabelEngine4.ECS.Systems
 {
     public class MenuSystem : IBabelSystem
     {
-        EntitySet EntitiesSet = null;
+        EntitySet
+            EntitiesSet = null,
+            DisabledEntitiesSet = null
+        ;
+
+        public Func<int> ChangeSelected = null;
+
+        public string CurrentMenu = null;
 
         public void Reset()
         {
             EntitiesSet = App.world.GetEntities().With<Menu>().AsSet();
+            DisabledEntitiesSet = App.world.GetDisabledEntities().With<Menu>().AsSet();
+        }
+
+        public void OnLoad()
+        {
+            SetMenu(null, true);
+        }
+
+        public void SetMenu(string Menu, bool Force = false)
+        {
+            if (!Force && CurrentMenu == Menu)
+            {
+                return;
+            }
+
+            CurrentMenu = Menu;
+
+            foreach(ref readonly Entity _menu in EntitiesSet.GetEntities())
+            {
+                _menu.Disable();
+
+                foreach (Entity menuItem in _menu.GetChildren())
+                {
+                    menuItem.Disable();
+                }
+            }
+
+            if (CurrentMenu != null)
+            {
+                foreach (ref readonly Entity _menu in DisabledEntitiesSet.GetEntities())
+                {
+                    ref Menu menu = ref _menu.Get<Menu>();
+
+                    if (menu.Name != CurrentMenu)
+                    {
+                        continue;
+                    }
+
+                    _menu.Enable();
+
+                    foreach (Entity menuItem in _menu.GetChildren())
+                    {
+                        menuItem.Enable();
+                    }
+                }
+            }
         }
 
         public void Update()
         {
+            if (CurrentMenu == null)
+            {
+                return;
+            }
+
             ReadOnlySpan<Entity> Entities = EntitiesSet.GetEntities();
+            IEnumerable<Entity> _menuItems;
             // Allocate this here, use it a bunch later
             int SelectedIDReal;
 
@@ -28,19 +88,18 @@ namespace BabelEngine4.ECS.Systems
             {
                 ref Menu menu = ref _menu.Get<Menu>();
 
-                // Don't preallocate this because... is it worth preallocating an interface??
-                IEnumerable<Entity> _menuItems = _menu.GetChildren();
+                if (CurrentMenu != menu.Name)
+                {
+                    continue;
+                }
+
+                _menuItems = _menu.GetChildren();
 
                 SelectedIDReal = menu.SelectedID;
 
-                // TODO: Abstract menu controls
-                if (App.input.keyboard.Held(Keys.Down))
+                if (ChangeSelected != null)
                 {
-                    SelectedIDReal++;
-                }
-                if (App.input.keyboard.Held(Keys.Up))
-                {
-                    SelectedIDReal--;
+                    SelectedIDReal += ChangeSelected();
                 }
 
                 if (SelectedIDReal < 0)
@@ -58,33 +117,24 @@ namespace BabelEngine4.ECS.Systems
                 foreach (Entity _menuItem in _menuItems)
                 {
                     ref MenuItem menuItem = ref _menuItem.Get<MenuItem>();
-                    bool ToChange = menuItem.State == MenuItem.MenuItemState.Unset || i == SelectedIDReal;
+                    ref Text menuItemText = ref _menuItem.Get<Text>();
 
                     menuItem.Selected = false;
 
                     if (i == SelectedIDReal)
                     {
-                        if (ToChange)
-                        {
-                            //menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Hover);
-                            menuItem.State = MenuItem.MenuItemState.Hover;
-                        }
-
-                        //menuItem.Active?.Invoke();
+                        menuItem.State = MenuItem.MenuItemState.Hover;
+                        menuItemText.color = menu.HoverColor;
 
                         if (App.input.keyboard.Pressed(Keys.Enter))
                         {
-                            //menuItem.Select?.Invoke();
                             menuItem.Selected = true;
                         }
                     }
                     else
                     {
-                        if (ToChange)
-                        {
-                            //menuItem.OnChangeState?.Invoke(_menuItem, MenuItem.MenuItemState.Blur);
-                            menuItem.State = MenuItem.MenuItemState.Blur;
-                        }
+                        menuItem.State = MenuItem.MenuItemState.Blur;
+                        menuItemText.color = menu.BlurColor;
                     }
 
                     i++;

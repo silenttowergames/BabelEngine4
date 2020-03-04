@@ -51,5 +51,10 @@ namespace BabelEngine4.ECS.Systems
         {
             EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
         }
+
+        public void OnLoad()
+        {
+            // nothing
+        }
     }
 }

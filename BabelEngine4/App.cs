@@ -24,12 +24,12 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Collisions
+    // TODO: Fix draw depths
     // TODO: SFX & Music
-    // TODO: Saving; save states; config
-    // TODO: Stress test
+    // TODO: Save states that don't save to file
+    // TODO: Collisions
     // TODO: A* pathfinding with tilemap
-    // TODO: Menus finalized (only usable when active; only one active at a time)
+    // TODO: Stress test
     
     public class App : Game
     {
@@ -62,14 +62,14 @@ namespace BabelEngine4
 
         static string saveState = null;
 
+        public static IBabelSystem[] systems;
+
         // Local vars
 
         string
             Title,
             Version
         ;
-
-        public IBabelSystem[] systems;
 
         DrawSystem drawSystem = new DrawSystem();
 
@@ -166,6 +166,11 @@ namespace BabelEngine4
 
                 Scene = null;
 
+                for (int i = 0; i < systems.Length; i++)
+                {
+                    systems[i].OnLoad();
+                }
+
                 GC.Collect();
             }
 
@@ -212,6 +217,19 @@ namespace BabelEngine4
         public static void StateLoad()
         {
             //
+        }
+
+        public static T GetSystem<T>() where T : class, IBabelSystem
+        {
+            foreach (IBabelSystem system in systems)
+            {
+                if (system is T)
+                {
+                    return (T)system;
+                }
+            }
+
+            return null;
         }
     }
 }

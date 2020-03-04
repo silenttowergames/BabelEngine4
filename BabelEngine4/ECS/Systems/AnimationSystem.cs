@@ -33,5 +33,10 @@ namespace BabelEngine4.ECS.Systems
         {
             // nothing
         }
+
+        public void OnLoad()
+        {
+            // nothing
+        }
     }
 }

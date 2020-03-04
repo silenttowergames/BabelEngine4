@@ -10,5 +10,6 @@ namespace BabelEngine4.ECS.Systems
     {
         void Update();
         void Reset();
+        void OnLoad();
     }
 }

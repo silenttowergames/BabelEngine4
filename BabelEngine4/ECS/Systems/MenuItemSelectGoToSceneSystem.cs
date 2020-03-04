@@ -17,6 +17,11 @@ namespace BabelEngine4.ECS.Systems
             entities = App.world.GetEntities().With<MenuItem>().With<MenuItemSelectGoToScene>().AsSet();
         }
 
+        public void OnLoad()
+        {
+            // nothing
+        }
+
         public void Update()
         {
             foreach (ref readonly Entity entity in entities.GetEntities())

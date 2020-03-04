@@ -15,6 +15,11 @@ namespace BabelEngine4.ECS.Systems
             // nothing
         }
 
+        public void OnLoad()
+        {
+            // nothing
+        }
+
         public void Update()
         {
             Span<Body> bodies = App.world.Get<Body>();

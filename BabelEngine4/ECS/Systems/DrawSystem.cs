@@ -27,6 +27,11 @@ namespace BabelEngine4.ECS.Systems
             EntitySetWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet();
         }
 
+        public void OnLoad()
+        {
+            // nothing
+        }
+
         public void Update()
         {
             ReadOnlySpan<Entity> EntitiesWithSprites = EntitySetWithSprites.GetEntities();
