@@ -57,7 +57,8 @@ namespace BabelEngine4.Assets.Tiled
                     }
 
                     App.Factories[Raw.map.objectGroups[O].objects[o].type].Create(
-                        o / 1000f,
+                        //o / 1000f,
+                        0,
                         Raw.map.objectGroups[O].ID,
                         Parallax,
                         Raw.map.objectGroups[O].properties
