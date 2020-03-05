@@ -15,6 +15,57 @@ namespace BabelEngine4.Saving
 
         Dictionary<int, List<Keys>> KControl = new Dictionary<int, List<Keys>>();
 
+        float
+            volumeMaster = 0.5f,
+            volumeMusic = 0.5f,
+            volumeSFX = 0.5f
+        ;
+
+        public float VolumeMaster
+        {
+            get
+            {
+                return volumeMaster;
+            }
+
+            set
+            {
+                volumeMaster = value;
+
+                SetVolume();
+            }
+        }
+
+        public float VolumeMusic
+        {
+            get
+            {
+                return volumeMusic;
+            }
+
+            set
+            {
+                volumeMusic = value;
+
+                SetVolume();
+            }
+        }
+
+        public float VolumeSFX
+        {
+            get
+            {
+                return volumeSFX;
+            }
+
+            set
+            {
+                volumeSFX = value;
+
+                SetVolume();
+            }
+        }
+
         public Point WindowSize;
 
         string filename;
@@ -36,6 +87,8 @@ namespace BabelEngine4.Saving
             {
                 WindowSize = App.windowManager.WindowSize;
             }
+
+            SetVolume();
         }
 
         public void Save()
@@ -53,6 +106,22 @@ namespace BabelEngine4.Saving
             }
 
             return filename;
+        }
+
+        public static float Euler(float i)
+        {
+            return (float)Math.Pow(i, 2.7183);
+        }
+
+        void SetVolume()
+        {
+            float
+                Music = VolumeMusic * VolumeMaster,
+                SFX = VolumeSFX * VolumeMaster
+            ;
+
+            App.assets.SetVolumeMusic(Music);
+            App.assets.SetVolumeSFX(SFX);
         }
 
         List<T> GetInput<T>(int i, Dictionary<int, List<T>> _dictionary)

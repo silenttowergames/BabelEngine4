@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.Assets.Audio
 {
-    public class SFX : Asset<SoundEffect>
+    public class SFX : Asset<SoundEffect>, IHasVolume
     {
         public enum SFXCondition
         {
@@ -91,6 +91,14 @@ namespace BabelEngine4.Assets.Audio
             }
 
             return null;
+        }
+
+        public void SetVolume(float Volume)
+        {
+            for (int i = 0; i < instances.Length; i++)
+            {
+                instances[i].Volume = Math.Min(1, Math.Max(0, Volume));
+            }
         }
     }
 }

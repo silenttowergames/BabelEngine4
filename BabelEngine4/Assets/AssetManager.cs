@@ -22,6 +22,8 @@ namespace BabelEngine4.Assets
 
         Dictionary<string, Map> maps = new Dictionary<string, Map>();
 
+        Dictionary<string, Music> musics = new Dictionary<string, Music>();
+
         Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
 
         Dictionary<string, SFX> sfxs = new Dictionary<string, SFX>();
@@ -39,9 +41,28 @@ namespace BabelEngine4.Assets
         {
             load<Font, SpriteFont>(fonts);
             load<Map, TiledMapContainer>(maps);
+            load<Music, SoundEffect>(musics);
             load<Shader, Effect>(shaders);
             load<SFX, SoundEffect>(sfxs);
             load<SpriteSheet, Texture2D>(sprites);
+        }
+
+        void SetVolume<T>(float V, Dictionary<string, T> Assets) where T : IHasVolume
+        {
+            foreach (T Asset in Assets.Values)
+            {
+                Asset.SetVolume(V);
+            }
+        }
+
+        public void SetVolumeMusic(float V)
+        {
+            SetVolume(V, musics);
+        }
+
+        public void SetVolumeSFX(float V)
+        {
+            SetVolume(V, sfxs);
         }
 
         void add<T, C>(Dictionary<string, T> assetMap, params T[] assets) where T : Asset<C>
@@ -80,6 +101,11 @@ namespace BabelEngine4.Assets
             add<Map, TiledMapContainer>(maps, _maps);
         }
 
+        public void addMusic(params Music[] _musics)
+        {
+            add<Music, SoundEffect>(musics, _musics);
+        }
+
         public void addShaders(params Shader[] _shader)
         {
             add<Shader, Effect>(shaders, _shader);
@@ -103,6 +129,11 @@ namespace BabelEngine4.Assets
         public Map map(string Filename)
         {
             return get<Map, TiledMapContainer>(maps, Filename);
+        }
+
+        public Music music(string Filename)
+        {
+            return get<Music, SoundEffect>(musics, Filename);
         }
 
         public Shader shader(string Filename)

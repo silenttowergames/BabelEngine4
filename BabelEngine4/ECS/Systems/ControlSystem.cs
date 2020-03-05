@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class ControlSystem : IBabelSystem
+    public class ControlSystem : SystemSkeleton
     {
-        public void Update()
+        public override void Update()
         {
             Span<Director> directors = App.world.Get<Director>();
             
@@ -23,16 +23,6 @@ namespace BabelEngine4.ECS.Systems
                 director.MoveDown = App.input.keyboard.Held(Keys.Down) || App.input.gamepad1.Down(Buttons.DPadDown) || App.input.gamepad1.Down(Buttons.LeftThumbstickDown);
                 director.MoveUp = App.input.keyboard.Held(Keys.Up) || App.input.gamepad1.Down(Buttons.DPadUp) || App.input.gamepad1.Down(Buttons.LeftThumbstickUp);
             }
-        }
-
-        public void Reset()
-        {
-            // nothing
-        }
-
-        public void OnLoad()
-        {
-            // nothing
         }
     }
 }

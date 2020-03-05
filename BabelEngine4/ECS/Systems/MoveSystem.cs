@@ -8,19 +8,9 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class MoveSystem : IBabelSystem
+    public class MoveSystem : SystemSkeleton
     {
-        public void Reset()
-        {
-            // nothing
-        }
-
-        public void OnLoad()
-        {
-            // nothing
-        }
-
-        public void Update()
+        public override void Update()
         {
             Span<Body> bodies = App.world.Get<Body>();
 

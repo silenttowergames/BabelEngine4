@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class DrawSystem : IBabelSystem
+    public class DrawSystem : SystemSkeleton
     {
         EntitySet
             EntitySetWithSprites = null,
@@ -21,18 +21,13 @@ namespace BabelEngine4.ECS.Systems
 
         public static RenderTarget primaryRenderTarget = null;
 
-        public void Reset()
+        public override void Reset()
         {
             EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
             EntitySetWithText = App.world.GetEntities().With<Text>().With<Body>().AsSet();
         }
 
-        public void OnLoad()
-        {
-            // nothing
-        }
-
-        public void Update()
+        public override void Update()
         {
             ReadOnlySpan<Entity> EntitiesWithSprites = EntitySetWithSprites.GetEntities();
             ReadOnlySpan<Entity> EntitiesWithText = EntitySetWithText.GetEntities();

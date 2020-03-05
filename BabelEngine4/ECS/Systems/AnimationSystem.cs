@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class AnimationSystem : IBabelSystem
+    public class AnimationSystem : SystemSkeleton
     {
-        public void Update()
+        public override void Update()
         {
             Span<Sprite> sprites = App.world.Get<Sprite>();
 
@@ -27,16 +27,6 @@ namespace BabelEngine4.ECS.Systems
                     sprites[i].animationTicker.Reset(sprites[i].sheet.Meta.frames.Values.ElementAt(sprites[i].Animation.from + sprites[i].Frame).duration / (1000 / 60));
                 }
             }
-        }
-
-        public void Reset()
-        {
-            // nothing
-        }
-
-        public void OnLoad()
-        {
-            // nothing
         }
     }
 }

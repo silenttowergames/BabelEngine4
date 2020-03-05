@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class DirectorSystem : IBabelSystem
+    public class DirectorSystem : SystemSkeleton
     {
         EntitySet EntitiesSet = null;
 
         float Speed = 0.5f;
 
-        public void Update()
+        public override void Update()
         {
             ReadOnlySpan<Entity> Entities = EntitiesSet.GetEntities();
 
@@ -47,14 +47,9 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        public void Reset()
+        public override void Reset()
         {
             EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
-        }
-
-        public void OnLoad()
-        {
-            // nothing
         }
     }
 }

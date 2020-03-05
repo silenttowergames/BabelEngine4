@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class CameraFollowSystem : IBabelSystem
+    public class CameraFollowSystem : SystemSkeleton
     {
         EntitySet Set = null;
 
-        public void Update()
+        public override void Update()
         {
             foreach (ref readonly Entity E in Set.GetEntities())
             {
@@ -23,14 +23,9 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        public void Reset()
+        public override void Reset()
         {
             Set = App.world.GetEntities().With<Body>().With<CameraFollow>().AsSet();
-        }
-
-        public void OnLoad()
-        {
-            // nothing
         }
     }
 }

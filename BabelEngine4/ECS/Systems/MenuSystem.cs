@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class MenuSystem : IBabelSystem
+    public class MenuSystem : SystemSkeleton
     {
         EntitySet
             EntitiesSet = null,
@@ -21,13 +21,13 @@ namespace BabelEngine4.ECS.Systems
 
         public string CurrentMenu = null;
 
-        public void Reset()
+        public override void Reset()
         {
             EntitiesSet = App.world.GetEntities().With<Menu>().AsSet();
             DisabledEntitiesSet = App.world.GetDisabledEntities().With<Menu>().AsSet();
         }
 
-        public void OnLoad()
+        public override void OnLoad()
         {
             SetMenu(null, true);
         }
@@ -72,7 +72,7 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        public void Update()
+        public override void Update()
         {
             if (CurrentMenu == null)
             {

@@ -8,21 +8,16 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.ECS.Systems
 {
-    public class MenuItemSelectGoToSceneSystem : IBabelSystem
+    public class MenuItemSelectGoToSceneSystem : SystemSkeleton
     {
         EntitySet entities;
 
-        public void Reset()
+        public override void Reset()
         {
             entities = App.world.GetEntities().With<MenuItem>().With<MenuItemSelectGoToScene>().AsSet();
         }
 
-        public void OnLoad()
-        {
-            // nothing
-        }
-
-        public void Update()
+        public override void Update()
         {
             foreach (ref readonly Entity entity in entities.GetEntities())
             {

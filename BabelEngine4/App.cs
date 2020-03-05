@@ -1,5 +1,6 @@
 ﻿using BabelEngine4.Assets;
 using BabelEngine4.Assets.Aseprite;
+using BabelEngine4.Assets.Audio;
 using BabelEngine4.Assets.Json;
 using BabelEngine4.Assets.Sprites;
 using BabelEngine4.ECS.Components;
@@ -24,8 +25,6 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: SFX & Music
-    // TODO: Volume
     // TODO: Multiple shaders per RenderTarget that redraw to the RT
     // TODO: Save states that don't save to file
     // TODO: Collisions
@@ -65,14 +64,14 @@ namespace BabelEngine4
 
         public static IBabelSystem[] systems;
 
+        static DrawSystem drawSystem = new DrawSystem();
+
         // Local vars
 
         string
             Title,
             Version
         ;
-
-        DrawSystem drawSystem = new DrawSystem();
 
         public App(string _Title, string _Version, Point Resolution, Point Size)
         {
@@ -102,8 +101,6 @@ namespace BabelEngine4
         {
             Window.Title = $"{Title} {Version}";
 
-            config.OnLoad();
-
             base.Initialize();
         }
 
@@ -112,6 +109,8 @@ namespace BabelEngine4
             renderer.spriteBatch = new SpriteBatch(GraphicsDevice);
 
             assets.Load();
+
+            config.OnLoad();
 
             base.LoadContent();
         }
@@ -133,9 +132,10 @@ namespace BabelEngine4
                 windowManager.Fullscreen = !windowManager.Fullscreen;
             }
 
-            if (input.keyboard.Held(Microsoft.Xna.Framework.Input.Keys.P))
+            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.P))
             {
-                assets.sfx("GB_Loop_04").Play(Assets.Audio.SFX.SFXCondition.New);
+                Entity e = world.CreateEntity();
+                e.Set(new Jukebox() { music = "GB_Loop_04" });
             }
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))
@@ -145,18 +145,21 @@ namespace BabelEngine4
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.L))
             {
-                world.Dispose();
-
-                using (Stream stream = File.OpenRead("savestate"))
-                {
-                    world = serializer.Deserialize(stream);
-                }
-
-                GC.Collect();
+                StateLoad();
             }
 
             if (Scene != null)
             {
+                if (world != null)
+                {
+                    drawSystem.OnUnload();
+
+                    for (int i = 0; i < systems.Length; i++)
+                    {
+                        systems[i].OnUnload();
+                    }
+                }
+
                 world?.Dispose();
 
                 world = new World();
@@ -171,6 +174,8 @@ namespace BabelEngine4
                 Scene.Load();
 
                 Scene = null;
+
+                drawSystem.OnLoad();
 
                 for (int i = 0; i < systems.Length; i++)
                 {
@@ -222,7 +227,21 @@ namespace BabelEngine4
 
         public static void StateLoad()
         {
-            //
+            drawSystem.OnUnload();
+
+            for (int i = 0; i < systems.Length; i++)
+            {
+                systems[i].OnUnload();
+            }
+
+            world.Dispose();
+
+            using (Stream stream = File.OpenRead("savestate"))
+            {
+                world = serializer.Deserialize(stream);
+            }
+
+            GC.Collect();
         }
 
         public static T GetSystem<T>() where T : class, IBabelSystem
