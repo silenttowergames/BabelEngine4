@@ -24,8 +24,9 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4
 {
-    // TODO: Fix draw depths
     // TODO: SFX & Music
+    // TODO: Volume
+    // TODO: Multiple shaders per RenderTarget that redraw to the RT
     // TODO: Save states that don't save to file
     // TODO: Collisions
     // TODO: A* pathfinding with tilemap
@@ -130,6 +131,11 @@ namespace BabelEngine4
             if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 windowManager.Fullscreen = !windowManager.Fullscreen;
+            }
+
+            if (input.keyboard.Held(Microsoft.Xna.Framework.Input.Keys.P))
+            {
+                assets.sfx("GB_Loop_04").Play(Assets.Audio.SFX.SFXCondition.New);
             }
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))

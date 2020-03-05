@@ -1,7 +1,9 @@
-﻿using BabelEngine4.Assets.Fonts;
+﻿using BabelEngine4.Assets.Audio;
+using BabelEngine4.Assets.Fonts;
 using BabelEngine4.Assets.Shaders;
 using BabelEngine4.Assets.Sprites;
 using BabelEngine4.Assets.Tiled;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -22,6 +24,8 @@ namespace BabelEngine4.Assets
 
         Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
 
+        Dictionary<string, SFX> sfxs = new Dictionary<string, SFX>();
+
         Dictionary<string, SpriteSheet> sprites = new Dictionary<string, SpriteSheet>();
 
         public AssetManager(ContentManager _Content, string _RootDir = "Content")
@@ -36,6 +40,7 @@ namespace BabelEngine4.Assets
             load<Font, SpriteFont>(fonts);
             load<Map, TiledMapContainer>(maps);
             load<Shader, Effect>(shaders);
+            load<SFX, SoundEffect>(sfxs);
             load<SpriteSheet, Texture2D>(sprites);
         }
 
@@ -80,6 +85,11 @@ namespace BabelEngine4.Assets
             add<Shader, Effect>(shaders, _shader);
         }
 
+        public void addSFX(params SFX[] _sfx)
+        {
+            add<SFX, SoundEffect>(sfxs, _sfx);
+        }
+
         public void addSprites(params SpriteSheet[] spriteSheets)
         {
             add<SpriteSheet, Texture2D>(sprites, spriteSheets);
@@ -98,6 +108,11 @@ namespace BabelEngine4.Assets
         public Shader shader(string Filename)
         {
             return get<Shader, Effect>(shaders, Filename);
+        }
+
+        public SFX sfx(string Filename)
+        {
+            return get<SFX, SoundEffect>(sfxs, Filename);
         }
 
         public SpriteSheet sprite(string Filename)
