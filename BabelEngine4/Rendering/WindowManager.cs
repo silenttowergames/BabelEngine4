@@ -118,7 +118,7 @@ namespace BabelEngine4.Rendering
                 if (DrawSystem.primaryRenderTarget == null)
                 {
                     DrawSystem.primaryRenderTarget = new RenderTarget(-1, App.renderer.resolution);
-                    DrawSystem.primaryRenderTarget.camera.MainCamera = true;
+                    DrawSystem.primaryRenderTarget.shaders = DrawSystem.shaders;
                 }
 
                 DrawSystem.primaryRenderTarget.Reset();

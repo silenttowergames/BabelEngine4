@@ -18,9 +18,12 @@ namespace BabelEngine4.Rendering
 
         public List<int> sprites;
 
-        RenderTarget2D renderTarget;
+        public RenderTarget2D
+            renderTarget,
+            renderTargetBackup
+        ;
 
-        public Shader shader = null;
+        public Shader[] shaders = null;
 
         public Point Position
         {
@@ -67,16 +70,25 @@ namespace BabelEngine4.Rendering
             camera.Position = FollowPos - (new Vector2(Resolution.X, Resolution.Y) / 2);
         }
 
-        public void Reset()
+        RenderTarget2D CreateRenderTarget()
         {
-            renderTarget = new RenderTarget2D(App.renderer.graphics.GraphicsDevice, (int)(Resolution.X * App.windowManager.Zoom), (int)(Resolution.Y * App.windowManager.Zoom));
+            return new RenderTarget2D(App.renderer.graphics.GraphicsDevice, (int)(Resolution.X * App.windowManager.Zoom), (int)(Resolution.Y * App.windowManager.Zoom));
         }
 
-        public void Setup(SpriteBatch spriteBatch)
+        public void Reset()
+        {
+            renderTarget = CreateRenderTarget();
+            renderTargetBackup = CreateRenderTarget();
+        }
+
+        public void Setup(SpriteBatch spriteBatch, bool Clear = true)
         {
             renderTarget.GraphicsDevice.SetRenderTarget(renderTarget);
 
-            renderTarget.GraphicsDevice.Clear(BGColor);
+            if (Clear)
+            {
+                renderTarget.GraphicsDevice.Clear(BGColor);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle? _rect = null)

@@ -1,4 +1,5 @@
-﻿using BabelEngine4.ECS.Components;
+﻿using BabelEngine4.Assets.Shaders;
+using BabelEngine4.ECS.Components;
 using BabelEngine4.ECS.Components.Rendering;
 using BabelEngine4.Rendering;
 using DefaultEcs;
@@ -21,6 +22,8 @@ namespace BabelEngine4.ECS.Systems
 
         public static RenderTarget primaryRenderTarget = null;
 
+        public static Shader[] shaders = null;
+
         public override void Reset()
         {
             EntitySetWithSprites = App.world.GetEntities().With<Sprite>().With<Body>().AsSet();
@@ -36,6 +39,17 @@ namespace BabelEngine4.ECS.Systems
             for (int i = 0; i < App.renderTargets.Length; i++)
             {
                 UseRenderTarget(App.renderTargets[i], ref EntitiesWithSprites, ref EntitiesWithText);
+
+                if (App.renderTargets[i].shaders != null && App.renderTargets[i].shaders.Length > 0)
+                {
+                    for (int j = 0; j < App.renderTargets[i].shaders.Length; j++)
+                    {
+                        ReuseRenderTarget(
+                            App.renderTargets[i],
+                            App.renderTargets[i].shaders[j]
+                        );
+                    }
+                }
             }
 
             // Draw the subtargets onto our primary target
@@ -53,6 +67,14 @@ namespace BabelEngine4.ECS.Systems
             }
 
             App.renderer.spriteBatch.End();
+
+            if (shaders != null && shaders.Length > 0)
+            {
+                for (int i = 0; i < shaders.Length; i++)
+                {
+                    ReuseRenderTarget(primaryRenderTarget, shaders[i]);
+                }
+            }
 
             // Render the primary target
             App.renderer.graphics.GraphicsDevice.SetRenderTarget(null);
@@ -90,11 +112,11 @@ namespace BabelEngine4.ECS.Systems
                 sortMode: SpriteSortMode.FrontToBack,
                 blendState: BlendState.NonPremultiplied,
                 samplerState: SamplerState.PointClamp,
-                effect: renderTarget.shader?.Raw,
+                //effect: renderTarget.shader?.Raw,
                 transformMatrix: renderTarget.camera.matrix
             );
 
-            renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
+            //renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
 
             // Allocating position for all things drawn
             Vector2 Position = new Vector2();
@@ -232,6 +254,29 @@ namespace BabelEngine4.ECS.Systems
             }
 
             App.renderer.spriteBatch.End();
+        }
+
+        void ReuseRenderTarget(RenderTarget renderTarget, Shader shader)
+        {
+            renderTarget.renderTarget.GraphicsDevice.SetRenderTarget(renderTarget.renderTargetBackup);
+
+            App.renderer.spriteBatch.Begin(
+                sortMode: SpriteSortMode.FrontToBack,
+                blendState: BlendState.NonPremultiplied,
+                samplerState: SamplerState.PointClamp,
+                effect: shader.Raw
+            );
+
+            renderTarget.Draw(
+                App.renderer.spriteBatch,
+                new Rectangle(0, 0, renderTarget.renderTarget.Width, renderTarget.renderTarget.Height)
+            );
+
+            App.renderer.spriteBatch.End();
+
+            RenderTarget2D temp = renderTarget.renderTarget;
+            renderTarget.renderTarget = renderTarget.renderTargetBackup;
+            renderTarget.renderTargetBackup = temp;
         }
 
         public static float getLayerDepth(float LayerDepth, float LayerID)

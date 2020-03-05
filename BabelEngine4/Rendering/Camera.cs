@@ -9,8 +9,6 @@ namespace BabelEngine4.Rendering
 {
     public struct Camera
     {
-        public bool MainCamera;
-
         public float
             Rotation,
             Zoom

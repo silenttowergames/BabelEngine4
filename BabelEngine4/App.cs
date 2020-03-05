@@ -64,7 +64,7 @@ namespace BabelEngine4
 
         public static IBabelSystem[] systems;
 
-        static DrawSystem drawSystem = new DrawSystem();
+        public static DrawSystem drawSystem = new DrawSystem();
 
         // Local vars
 
