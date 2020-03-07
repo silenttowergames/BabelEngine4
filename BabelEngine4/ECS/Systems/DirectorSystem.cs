@@ -14,7 +14,12 @@ namespace BabelEngine4.ECS.Systems
     {
         EntitySet EntitiesSet = null;
 
-        float Speed = 0.5f;
+        float Speed = 5f;
+
+        public override void Reset()
+        {
+            EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
+        }
 
         public override void Update()
         {
@@ -45,11 +50,6 @@ namespace BabelEngine4.ECS.Systems
                     body.Velocity.Y -= Speed;
                 }
             }
-        }
-
-        public override void Reset()
-        {
-            EntitiesSet = App.world.GetEntities().With<Director>().With<Body>().AsSet();
         }
     }
 }

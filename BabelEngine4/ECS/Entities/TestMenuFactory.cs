@@ -21,7 +21,7 @@ namespace BabelEngine4.ECS.Entities
             menuItemMiddleStr = "Middle"
         ;
 
-        public void Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
         {
             Entity menu = App.world.CreateEntity();
             menu.Set(new Menu() { HoverColor = Color.Blue, BlurColor = Color.Yellow, Name = "menu0" });
@@ -45,6 +45,8 @@ namespace BabelEngine4.ECS.Entities
             menuItemGoodbye.Set(new MenuItem());
             menuItemGoodbye.Set(new MenuItemSelectGoToScene() { SceneID = "mapscene" });
             menu.SetAsParentOf(menuItemGoodbye);
+
+            return menu;
         }
     }
 }

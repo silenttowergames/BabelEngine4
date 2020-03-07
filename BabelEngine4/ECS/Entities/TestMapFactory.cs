@@ -12,7 +12,7 @@ namespace BabelEngine4.ECS.Entities
 {
     public class TestMapFactory : IEntityFactory
     {
-        public void Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
         {
             Entity m = App.world.CreateEntity();
             m.Set(new TileMap()
@@ -26,6 +26,8 @@ namespace BabelEngine4.ECS.Entities
                     2, 2, 2, 2, 2, 2, 2, 2,
                 }
             });
+
+            return m;
         }
     }
 }
