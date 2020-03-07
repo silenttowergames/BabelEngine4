@@ -22,14 +22,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace BabelEngine4
 {
-    // TODO: Multiple shaders per RenderTarget that redraw to the RT
-    // TODO: Save states that don't save to file
     // TODO: Collisions
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
+    // TODO: Save states that don't save to file
     
     public class App : Game
     {
@@ -58,9 +59,9 @@ namespace BabelEngine4
 
         public static Config config = null;
 
-        static ISerializer serializer = new TextSerializer();
+        static ISerializer serializer = new BinarySerializer();
 
-        static string saveState = null;
+        static byte[] saveState = null;
 
         public static IBabelSystem[] systems;
 
@@ -206,27 +207,23 @@ namespace BabelEngine4
 
         public static void StateSave()
         {
-            //*
             using (Stream stream = File.Create("savestate"))
             {
                 serializer.Serialize(stream, world);
             }
-            //*/
 
-            /*
-            using (Stream stream = new MemoryStream())
-            {
-                serializer.Serialize(stream, world);
-
-                StreamReader reader = new StreamReader(stream);
-            }
-            //*/
+            saveState = File.ReadAllBytes("savestate");
 
             GC.Collect();
         }
 
         public static void StateLoad()
         {
+            if (saveState == null)
+            {
+                return;
+            }
+
             drawSystem.OnUnload();
 
             for (int i = 0; i < systems.Length; i++)
@@ -236,7 +233,8 @@ namespace BabelEngine4
 
             world.Dispose();
 
-            using (Stream stream = File.OpenRead("savestate"))
+            //using (Stream stream = File.OpenRead("savestate"))
+            using (Stream stream = new MemoryStream(saveState))
             {
                 world = serializer.Deserialize(stream);
             }

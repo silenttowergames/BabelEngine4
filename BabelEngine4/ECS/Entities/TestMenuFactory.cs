@@ -32,7 +32,7 @@ namespace BabelEngine4.ECS.Entities
             menuItemHello.Set(new MenuItem());
             menuItemHello.Set(new MenuItemSelectGoToScene() { SceneID = "testscene0" });
             menu.SetAsParentOf(menuItemHello);
-
+            
             Entity menuItemMiddle = App.world.CreateEntity();
             menuItemMiddle.Set(new Body() { Position = new Vector2(0, 10) });
             menuItemMiddle.Set(new Text(menuItemMiddleStr) { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
