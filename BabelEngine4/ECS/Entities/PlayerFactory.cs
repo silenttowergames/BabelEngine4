@@ -19,18 +19,25 @@ namespace BabelEngine4.ECS.Entities
     {
         public bool Alive = true;
 
-        public Entity Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, List<TiledProperty> properties = null)
         {
             Entity e = App.world.CreateEntity();
             e.Set(new Sprite("8x8", "Protag") { Effect = SpriteEffects.None, LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
-            e.Set(new AABB());
+            e.Set(new AABB()
+            {
+                Hitboxes = new Hitbox[]
+                {
+                    new Hitbox() { Bounds = new RectangleF() { Width = 8, Height = 8 } },
+                    //new Hitbox() { Bounds = new RectangleF() { Width = 8, Height = 8, X = -8, Y = -8, } },
+                }
+            });
             //e.Set(new CameraFollow() { RenderTargetID = 0 });
             //e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(2f) });
             if (Alive)
             {
                 e.Set(new Director());
             }
-            e.Set(new Body());
+            e.Set(new Body() { Position = Position });
 
             return e;
         }

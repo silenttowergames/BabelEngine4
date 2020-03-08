@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using BabelEngine4.Rendering;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace BabelEngine4.Assets.Shaders
 {
     public class Shader : Asset<Effect>
     {
-        public Action<Effect> Update;
+        public Action<Effect, RenderTarget> Update;
 
-        public Shader(string _Filename, Action<Effect> _Update = null) : base(_Filename)
+        public Shader(string _Filename, Action<Effect, RenderTarget> _Update = null) : base(_Filename)
         {
             Update = _Update;
         }

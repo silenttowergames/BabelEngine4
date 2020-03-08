@@ -61,6 +61,10 @@ namespace BabelEngine4.Assets.Tiled
                         0,
                         Raw.map.objectGroups[O].ID,
                         Parallax,
+                        new Vector2(
+                            Raw.map.objectGroups[O].objects[o].x,
+                            Raw.map.objectGroups[O].objects[o].y
+                        ),
                         Raw.map.objectGroups[O].properties
                     );
                 }

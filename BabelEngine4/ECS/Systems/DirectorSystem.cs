@@ -14,7 +14,7 @@ namespace BabelEngine4.ECS.Systems
     {
         EntitySet EntitiesSet = null;
 
-        float Speed = 5f;
+        float Speed = 0.25f;
 
         public override void Reset()
         {

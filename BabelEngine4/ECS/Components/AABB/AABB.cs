@@ -8,5 +8,6 @@ namespace BabelEngine4.ECS.Components.AABB
 {
     public struct AABB
     {
+        public Hitbox[] Hitboxes;
     }
 }

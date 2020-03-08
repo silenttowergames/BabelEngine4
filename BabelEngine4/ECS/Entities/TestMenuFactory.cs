@@ -21,7 +21,7 @@ namespace BabelEngine4.ECS.Entities
             menuItemMiddleStr = "Middle"
         ;
 
-        public Entity Create(float LayerDepth, int LayerID, float Parallax, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, List<TiledProperty> properties = null)
         {
             Entity menu = App.world.CreateEntity();
             menu.Set(new Menu() { HoverColor = Color.Blue, BlurColor = Color.Yellow, Name = "menu0" });

@@ -1,5 +1,6 @@
 ﻿using BabelEngine4.ECS.Components;
 using DefaultEcs;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,11 @@ namespace BabelEngine4.Scenes
     {
         public void Load()
         {
-            Entity p = App.Factories["player"].Create(0, 1, 1);
-            p.Get<Body>().Position = new Microsoft.Xna.Framework.Vector2(54, 60);
+            App.Factories["player"].Create(0, 1, 1, new Vector2(32, 32));
 
-            Entity pd = App.Factories["player-dead"].Create(0, 1, 1);
-            pd.Get<Body>().Position = new Microsoft.Xna.Framework.Vector2(64);
+            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(40, 40));
+            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(48, 40));
+            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(64, 40));
         }
     }
 }

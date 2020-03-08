@@ -8,34 +8,39 @@ namespace BabelEngine4.Misc
 {
     public struct Line
     {
-        public float Left, Right;
+        public float Beginning, End;
 
-        public float Length => Right - Left;
+        public float Length => End - Beginning;
 
         public static bool Intersects(Line line, float point, bool Inclusive = true)
         {
             if (!Inclusive)
             {
-                return point > line.Left && point < line.Right;
+                return point > line.Beginning && point < line.End;
             }
 
-            return point >= line.Left && point <= line.Right;
+            return point >= line.Beginning && point <= line.End;
         }
 
         public static bool Intersects(Line l1, Line l2, bool Inclusive = true)
         {
-            return Intersects(l1, l2.Left, Inclusive) || Intersects(l1, l2.Right, Inclusive) || Inside(l1, l2);
+            return Intersects(l1, l2.Beginning, Inclusive) || Intersects(l1, l2.End, Inclusive) || Inside(l1, l2);
         }
 
         public static bool Inside(Line l1, Line l2)
         {
-            return l1.Left > l2.Left && l1.Right < l2.Right;
+            if(l1.Beginning == l2.Beginning || l1.End == l2.End)
+            {
+                return true;
+            }
+
+            return l1.Beginning > l2.Beginning && l1.End < l2.End;
         }
 
         public Line(float _Left, float _Right)
         {
-            Left = _Left;
-            Right = _Right;
+            Beginning = _Left;
+            End = _Right;
         }
 
         public bool Intersects(float point)

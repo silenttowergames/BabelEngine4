@@ -267,6 +267,8 @@ namespace BabelEngine4.ECS.Systems
                 effect: shader.Raw
             );
 
+            shader.Update?.Invoke(shader.Raw, renderTarget);
+
             renderTarget.Draw(
                 App.renderer.spriteBatch,
                 new Rectangle(0, 0, renderTarget.renderTarget.Width, renderTarget.renderTarget.Height)
