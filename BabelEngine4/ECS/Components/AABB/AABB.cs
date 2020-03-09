@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DefaultEcs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace BabelEngine4.ECS.Components.AABB
 {
     public struct AABB
     {
+        public List<long> Spaces;
+
         public Hitbox[] Hitboxes;
     }
 }

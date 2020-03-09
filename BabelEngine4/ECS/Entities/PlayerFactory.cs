@@ -31,11 +31,16 @@ namespace BabelEngine4.ECS.Entities
                     //new Hitbox() { Bounds = new RectangleF() { Width = 8, Height = 8, X = -8, Y = -8, } },
                 }
             });
-            //e.Set(new CameraFollow() { RenderTargetID = 0 });
-            //e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(2f) });
+            e.Set(new Director());
             if (Alive)
             {
-                e.Set(new Director());
+                e.Set(new CameraFollow() { RenderTargetID = 0 });
+                e.Set(new AIPlayer());
+                e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(1f) });
+            }
+            else
+            {
+                e.Set(new AIRandom());
             }
             e.Set(new Body() { Position = Position });
 

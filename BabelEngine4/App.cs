@@ -28,8 +28,11 @@ using System.Xml.Serialization;
 namespace BabelEngine4
 {
     // TODO: Collisions
+    // TODO: Pause game & music/sfx when window is inactive (maybe inactive event?)
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
+    // TODO: Clean up test componentes/entities/systems/scenes
+    // TODO: Make Tiled properties better?
     // TODO: Save states that don't save to file
     
     public class App : Game

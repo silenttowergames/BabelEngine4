@@ -11,13 +11,21 @@ namespace BabelEngine4.Scenes
 {
     public class TestScene2 : IScene
     {
+        Point SpawnMeasurements = new Point(8, 8);
+
         public void Load()
         {
-            App.Factories["player"].Create(0, 1, 1, new Vector2(32, 32));
+            App.Factories["player"].Create(0, 1, 1, new Vector2(32));
 
-            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(40, 40));
-            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(48, 40));
-            App.Factories["player-dead"].Create(0, 1, 1, new Vector2(64, 40));
+            for (int X = 0; X < SpawnMeasurements.X; X++)
+            {
+                for (int Y = 0; Y < SpawnMeasurements.Y; Y++)
+                {
+                    App.Factories["player-dead"].Create(0, 1, 1, new Vector2(X * 16, Y * 16));
+                }
+            }
+
+            //App.Factories["aabb-debug"].Create(0, 1, 1, new Vector2(32));
         }
     }
 }
