@@ -160,15 +160,19 @@ namespace BabelEngine4.ECS.Systems
             return new Rectangle(
                 (int)Math.Floor(bounds.Position.X / SpatialHashSize),
                 (int)Math.Floor(bounds.Position.Y / SpatialHashSize),
-                (int)Math.Ceiling(bounds.Size.X / SpatialHashSize),
-                (int)Math.Ceiling(bounds.Size.Y / SpatialHashSize)
+                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / SpatialHashSize),
+                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / SpatialHashSize)
             );
         }
 
         public override void Update()
         {
             BroadPhase();
-            NarrowPhase();
+
+            for (int i = 0; i < AllEntities.Count; i++)
+            {
+                NarrowPhase(AllEntities[i]);
+            }
         }
 
         void BroadPhase()
@@ -182,10 +186,13 @@ namespace BabelEngine4.ECS.Systems
 
             foreach (Entity entity in EntitySpan)
             {
-                AddEntityToPooledList(AllEntities, entity);
-
                 ref AABB eAABB = ref entity.Get<AABB>();
                 ref Body eBody = ref entity.Get<Body>();
+
+                if (eBody.Velocity != default)
+                {
+                    AddEntityToPooledList(AllEntities, entity);
+                }
 
                 if (eAABB.Cells == null)
                 {
@@ -202,9 +209,9 @@ namespace BabelEngine4.ECS.Systems
 
                     iBounds = BoundsToCells(bounds);
 
-                    for (int X = iBounds.X; X < iBounds.X + iBounds.Width; X++)
+                    for (int X = iBounds.X; X < iBounds.Width; X++)
                     {
-                        for (int Y = iBounds.Y; Y < iBounds.Y + iBounds.Height; Y++)
+                        for (int Y = iBounds.Y; Y < iBounds.Height; Y++)
                         {
                             Hash = GetHashedKey(X, Y);
 
@@ -217,62 +224,62 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        void NarrowPhase()
+        void NarrowPhase(Entity entity)
         {
-            for (int i = 0; i < AllEntities.Count; i++)
+            if (entity == default)
             {
-                Entity entity = AllEntities[i];
+                return;
+            }
 
-                if (entity == default)
+            ref AABB eAABB = ref entity.Get<AABB>();
+            ref Body eBody = ref entity.Get<Body>();
+
+            for (int h = 0; h < eAABB.Hitboxes.Length; h++)
+            {
+                for (int s = 0; s < eAABB.Cells.Count; s++)
                 {
-                    break;
-                }
-
-                ref AABB eAABB = ref entity.Get<AABB>();
-                ref Body eBody = ref entity.Get<Body>();
-
-                for (int h = 0; h < eAABB.Hitboxes.Length; h++)
-                {
-                    for (int s = 0; s < eAABB.Cells.Count; s++)
+                    if (eAABB.Cells[s] == long.MaxValue)
                     {
-                        if (eAABB.Cells[s] == long.MaxValue)
+                        break;
+                    }
+
+                    for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
+                    {
+                        Entity subentity = Cells[eAABB.Cells[s]][e];
+
+                        if (subentity == default)
                         {
                             break;
                         }
 
-                        for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
+                        if (entity == subentity)
                         {
-                            Entity subentity = Cells[eAABB.Cells[s]][e];
+                            continue;
+                        }
 
-                            if (subentity == default)
+                        ref AABB sAABB = ref subentity.Get<AABB>();
+                        ref Body sBody = ref subentity.Get<Body>();
+
+                        for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
+                        {
+                            CollideWith(
+                                ref eAABB.Hitboxes[h],
+                                ref eBody,
+                                ref sAABB.Hitboxes[sh],
+                                ref sBody
+                            );
+
+                            if (eBody.Velocity == default)
                             {
-                                break;
-                            }
-
-                            if (entity == subentity)
-                            {
-                                continue;
-                            }
-
-                            ref AABB sAABB = ref subentity.Get<AABB>();
-                            ref Body sBody = ref subentity.Get<Body>();
-
-                            for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
-                            {
-                                CollideWith(
-                                    ref eAABB.Hitboxes[h],
-                                    ref eBody,
-                                    ref sAABB.Hitboxes[sh],
-                                    ref sBody
-                                );
+                                return;
                             }
                         }
                     }
                 }
-
-                eBody.Position += eBody.Velocity;
-                eBody.Velocity = default;
             }
+
+            eBody.Position += eBody.Velocity;
+            eBody.Velocity = default;
         }
 
         void CollideWith(ref Hitbox entityHitbox, ref Body entityBody, ref Hitbox subentityHitbox, ref Body subentityBody)

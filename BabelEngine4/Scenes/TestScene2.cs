@@ -11,7 +11,7 @@ namespace BabelEngine4.Scenes
 {
     public class TestScene2 : IScene
     {
-        Point SpawnMeasurements = new Point(32, 32);
+        Point SpawnMeasurements = new Point(42, 42);
 
         public void Load()
         {
@@ -24,8 +24,6 @@ namespace BabelEngine4.Scenes
                     App.Factories["player-dead"].Create(0, 1, 1, new Vector2(X * 24, Y * 24));
                 }
             }
-
-            //App.Factories["aabb-debug"].Create(0, 1, 1, new Vector2(32));
         }
     }
 }

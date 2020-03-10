@@ -27,7 +27,9 @@ using System.Xml.Serialization;
 
 namespace BabelEngine4
 {
-    // TODO: Collisions
+    // TODO: Corners
+    // TODO: Edges of cells
+    // TODO: Only moving entities
     // TODO: Pause game & music/sfx when window is inactive (maybe inactive event?)
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
