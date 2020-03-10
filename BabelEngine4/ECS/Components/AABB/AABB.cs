@@ -9,7 +9,7 @@ namespace BabelEngine4.ECS.Components.AABB
 {
     public struct AABB
     {
-        public List<long> Spaces;
+        public List<long> Cells;
 
         public Hitbox[] Hitboxes;
     }

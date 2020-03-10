@@ -29,7 +29,7 @@ namespace BabelEngine4.Misc
 
         public static bool Inside(Line l1, Line l2)
         {
-            if(l1.Beginning == l2.Beginning || l1.End == l2.End)
+            if (l1.Beginning == l2.Beginning || l1.End == l2.End)
             {
                 return true;
             }

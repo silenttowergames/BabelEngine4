@@ -36,7 +36,7 @@ namespace BabelEngine4.ECS.Entities
             {
                 e.Set(new CameraFollow() { RenderTargetID = 0 });
                 e.Set(new AIPlayer());
-                e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(1f) });
+                //e.Set(new Text("upscaled\ntext") { color = new Color(40, 30, 255), spriteFont = "PressStart2P", LayerDepth = LayerDepth, LayerID = LayerID, Origin = new Vector2(8), Scale = new Vector2(1f) });
             }
             else
             {

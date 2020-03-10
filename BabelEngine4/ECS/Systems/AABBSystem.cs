@@ -14,38 +14,82 @@ namespace BabelEngine4.ECS.Systems
 {
     public class AABBSystem : SystemSkeleton
     {
+        class HashTable
+        {
+            Dictionary<long, List<Entity>> Cells;
 
-        EntitySet EntitiesSet = null;
+            public void Reset()
+            {
+                Cells = new Dictionary<long, List<Entity>>();
+            }
 
-        Dictionary<long, List<Entity>> Spaces;
+            public void Add(long Hash, Entity entity)
+            {
+                AddHash(Hash);
+
+                if (Cells[Hash].Contains(entity))
+                {
+                    return;
+                }
+
+                for (int i = 0; i < Cells[Hash].Count; i++)
+                {
+                    if (Cells[Hash][i] == default)
+                    {
+                        Cells[Hash][i] = entity;
+
+                        return;
+                    }
+                }
+
+                Cells[Hash].Add(entity);
+            }
+
+            void AddHash(long Hash)
+            {
+                if (Cells.ContainsKey(Hash))
+                {
+                    return;
+                }
+
+                Cells.Add(Hash, NewPooledEntityList());
+            }
+
+            public List<Entity> this[long Hash]
+            {
+                get
+                {
+                    return Cells[Hash];
+                }
+            }
+
+            List<Entity> NewPooledEntityList()
+            {
+                return new List<Entity>()
+                {
+                    default,
+                    default,
+                    default,
+                    default,
+                };
+            }
+        }
+
+        EntitySet EntitySet;
+
+        List<Entity> AllEntities;
+
+        HashTable Cells = new HashTable();
 
         const int SpatialHashSize = 64;
 
-        public override void Reset()
-        {
-            EntitiesSet = App.world.GetEntities().With<AABB>().With<Body>().AsSet();
-            // Reset this each time you switch scenes
-            Spaces = new Dictionary<long, List<Entity>>();
-        }
-
-        // Thanks, prime31!
         long GetHashedKey(int x, int y) => unchecked((long)x << 32 | (uint)y);
 
-        long InsertEntity(Entity e, int x, int y)
+        public override void Reset()
         {
-            // Turn X,Y into a single hash value
-            long Hash = GetHashedKey(x, y);
-
-            // If this space hasn't been used yet, we need to initialize it
-            // Pool some entities
-            if (!Spaces.ContainsKey(Hash))
-            {
-                Spaces.Add(Hash, CreatePooledList<Entity>());
-            }
-
-            AddEntityToPooledList(Spaces[Hash], e);
-
-            return Hash;
+            EntitySet = App.world.GetEntities().With<Body>().With<AABB>().AsSet();
+            AllEntities = new List<Entity>();
+            Cells.Reset();
         }
 
         void AddEntityToPooledList(List<Entity> List, Entity e)
@@ -66,224 +110,211 @@ namespace BabelEngine4.ECS.Systems
             List.Add(e);
         }
 
-        void ResetEntitiesInDictionary()
+        void AddLongToPooledList(List<long> List, long Hash)
         {
-            foreach (List<Entity> List in Spaces.Values)
-            {
-                ResetList(List);
-            }
-        }
-
-        void ResetList<T>(List<T> List) where T : struct
-        {
+            // Look for an empty entity if one exists & replace it
+            // This is pooling
             for (int i = 0; i < List.Count; i++)
             {
-                List[i] = default;
+                if (List[i] == long.MaxValue)
+                {
+                    List[i] = Hash;
+
+                    return;
+                }
             }
+
+            // If there wasn't an empty entity, replace it
+            List.Add(Hash);
         }
 
-        List<T> CreatePooledList<T>() where T : struct
+        List<long> NewPooledCellList()
         {
-            return new List<T>()
+            return new List<long>()
             {
-                /*
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                */
+                long.MaxValue,
+                long.MaxValue,
+                long.MaxValue,
+                long.MaxValue,
             };
         }
 
-        void InsertEntities()
+        void ResetEntityList(List<Entity> list)
         {
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i] = default;
+            }
+        }
+
+        void ResetCellList(List<long> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i] = long.MaxValue;
+            }
+        }
+
+        Rectangle BoundsToCells(RectangleF bounds)
+        {
+            return new Rectangle(
+                (int)Math.Floor(bounds.Position.X / SpatialHashSize),
+                (int)Math.Floor(bounds.Position.Y / SpatialHashSize),
+                (int)Math.Ceiling(bounds.Size.X / SpatialHashSize),
+                (int)Math.Ceiling(bounds.Size.Y / SpatialHashSize)
+            );
+        }
+
+        public override void Update()
+        {
+            BroadPhase();
+            NarrowPhase();
+        }
+
+        void BroadPhase()
+        {
+            ReadOnlySpan<Entity> EntitySpan = EntitySet.GetEntities();
             RectangleF bounds;
             Rectangle iBounds;
+            long Hash;
 
-            foreach (ref readonly Entity e in EntitiesSet.GetEntities())
+            ResetEntityList(AllEntities);
+
+            foreach (Entity entity in EntitySpan)
             {
-                ref AABB pe = ref e.Get<AABB>();
-                ref Body be = ref e.Get<Body>();
+                AddEntityToPooledList(AllEntities, entity);
 
-                if (pe.Spaces != null)
+                ref AABB eAABB = ref entity.Get<AABB>();
+                ref Body eBody = ref entity.Get<Body>();
+
+                if (eAABB.Cells == null)
                 {
-                    ResetList(pe.Spaces);
+                    eAABB.Cells = NewPooledCellList();
                 }
                 else
                 {
-                    pe.Spaces = CreatePooledList<long>();
+                    ResetCellList(eAABB.Cells);
                 }
 
-                foreach (Hitbox h in pe.Hitboxes)
+                for (int h = 0; h < eAABB.Hitboxes.Length; h++)
                 {
-                    bounds = h.GetRealBounds(be, true);
+                    bounds = eAABB.Hitboxes[h].GetRealBounds(eBody, true);
 
-                    iBounds = new Rectangle(
-                        (int)Math.Floor(bounds.Position.X / SpatialHashSize),
-                        (int)Math.Floor(bounds.Position.Y / SpatialHashSize),
-                        (int)Math.Ceiling(bounds.Size.X / SpatialHashSize),
-                        (int)Math.Ceiling(bounds.Size.Y / SpatialHashSize)
-                    );
+                    iBounds = BoundsToCells(bounds);
 
-                    for (int X = 0; X < iBounds.Width + 1; X++)
+                    for (int X = iBounds.X; X < iBounds.X + iBounds.Width; X++)
                     {
-                        if (iBounds.X + X < 0)
+                        for (int Y = iBounds.Y; Y < iBounds.Y + iBounds.Height; Y++)
                         {
-                            X -= (iBounds.X + X) + 1;
+                            Hash = GetHashedKey(X, Y);
 
-                            continue;
-                        }
+                            Cells.Add(Hash, entity);
 
-                        for (int Y = 0; Y < iBounds.Height + 1; Y++)
-                        {
-                            if (iBounds.Y + Y < 0)
-                            {
-                                Y -= (iBounds.Y + Y) + 1;
-
-                                continue;
-                            }
-
-                            pe.Spaces.Add(InsertEntity(e, iBounds.X + X, iBounds.Y + Y));
+                            AddLongToPooledList(eAABB.Cells, Hash);
                         }
                     }
                 }
             }
         }
 
-        public override void Update()
+        void NarrowPhase()
         {
-            if (true)
+            for (int i = 0; i < AllEntities.Count; i++)
             {
-                ResetEntitiesInDictionary();
-                InsertEntities();
+                Entity entity = AllEntities[i];
 
-                DoCollisions(EntitiesSet.GetEntities());
-            }
-            else
-            {
-                //DoCollisions(EntitiesSet.GetEntities().ToArray());
-            }
-
-            /*
-            Span<Text> Ts = App.world.Get<Text>();
-            foreach (ref Text t in Ts)
-            {
-                t.Message = "";
-
-                foreach (long Key in Spaces.Keys)
+                if (entity == default)
                 {
-                    t.Message += (Key + ": " + Spaces[Key].Count) + "\n";
+                    break;
                 }
+
+                ref AABB eAABB = ref entity.Get<AABB>();
+                ref Body eBody = ref entity.Get<Body>();
+
+                for (int h = 0; h < eAABB.Hitboxes.Length; h++)
+                {
+                    for (int s = 0; s < eAABB.Cells.Count; s++)
+                    {
+                        if (eAABB.Cells[s] == long.MaxValue)
+                        {
+                            break;
+                        }
+
+                        for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
+                        {
+                            Entity subentity = Cells[eAABB.Cells[s]][e];
+
+                            if (subentity == default)
+                            {
+                                break;
+                            }
+
+                            if (entity == subentity)
+                            {
+                                continue;
+                            }
+
+                            ref AABB sAABB = ref subentity.Get<AABB>();
+                            ref Body sBody = ref subentity.Get<Body>();
+
+                            for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
+                            {
+                                CollideWith(
+                                    ref eAABB.Hitboxes[h],
+                                    ref eBody,
+                                    ref sAABB.Hitboxes[sh],
+                                    ref sBody
+                                );
+                            }
+                        }
+                    }
+                }
+
+                eBody.Position += eBody.Velocity;
+                eBody.Velocity = default;
             }
-            */
         }
 
-        void DoCollisions(ReadOnlySpan<Entity> Entities)
+        void CollideWith(ref Hitbox entityHitbox, ref Body entityBody, ref Hitbox subentityHitbox, ref Body subentityBody)
         {
             RectangleF
-                re,
-                rf
+                entityBounds = entityHitbox.GetRealBounds(entityBody),
+                subentityBounds = subentityHitbox.GetRealBounds(subentityBody)
             ;
+
             float MaxDistance;
 
-            foreach (Entity e in Entities)
+            if (entityBounds.LineX.Intersects(subentityBounds.LineX, false))
             {
-                if (e == default)
+                if (entityHitbox.SolidRight && subentityHitbox.SolidTop && entityBody.Velocity.Y > 0 && subentityBounds.Top >= entityBounds.Bottom)
                 {
-                    continue;
-                }
-
-                ref AABB pe = ref e.Get<AABB>();
-                ref Body be = ref e.Get<Body>();
-
-                foreach (Hitbox he in pe.Hitboxes)
+                    MaxDistance = entityBounds.Bottom + entityBody.Velocity.Y;
+                    MaxDistance = Math.Min(MaxDistance, subentityBounds.Top);
+                    entityBody.Velocity.Y = MaxDistance - entityBounds.Bottom;
+                } // moving down
+                else if (entityHitbox.SolidTop && subentityHitbox.SolidBottom && entityBody.Velocity.Y < 0 && subentityBounds.Bottom <= entityBounds.Top)
                 {
-                    re = he.GetRealBounds(be);
+                    MaxDistance = entityBounds.Top + entityBody.Velocity.Y;
+                    MaxDistance = Math.Max(MaxDistance, subentityBounds.Bottom);
+                    entityBody.Velocity.Y = MaxDistance - entityBounds.Top;
+                } // moving up
+            } // if entity.LineX
 
-                    for (int D = 0; D < 2; D++)
-                    {
-                        //for (int s = 0; s < pe.Spaces.Count; s++)
-                        //{
-                            //foreach (Entity f in Spaces[pe.Spaces[s]])
-                            foreach (Entity f in Entities)
-                            {
-                                if (f == default)
-                                {
-                                    break;
-                                }
-
-                                if (f == e)
-                                {
-                                    continue;
-                                }
-
-                                ref AABB pf = ref f.Get<AABB>();
-                                ref Body bf = ref f.Get<Body>();
-
-                                foreach (Hitbox hf in pf.Hitboxes)
-                                {
-                                    rf = hf.GetRealBounds(bf);
-
-                                    if (D == 0)
-                                    {
-                                        if (re.LineY.Intersects(rf.LineY, false))
-                                        {
-                                            if (hf.SolidLeft && be.Velocity.X > 0 && rf.Left >= re.Right)
-                                            {
-                                                MaxDistance = re.Right + be.Velocity.X;
-                                                MaxDistance = Math.Min(MaxDistance, rf.Left);
-                                                be.Velocity.X = MaxDistance - re.Right;
-                                            } // moving right
-                                            else if (hf.SolidRight && be.Velocity.X < 0 && rf.Right <= re.Left)
-                                            {
-                                                MaxDistance = re.Left + be.Velocity.X;
-                                                MaxDistance = Math.Max(MaxDistance, rf.Right);
-                                                be.Velocity.X = MaxDistance - re.Left;
-                                            } // moving left
-                                        } // if re.LineY
-                                    }
-
-                                    if (D == 1)
-                                    {
-                                        if (re.LineX.Intersects(rf.LineX, false))
-                                        {
-                                            if (hf.SolidTop && be.Velocity.Y > 0 && rf.Top >= re.Bottom)
-                                            {
-                                                MaxDistance = re.Bottom + be.Velocity.Y;
-                                                MaxDistance = Math.Min(MaxDistance, rf.Top);
-                                                be.Velocity.Y = MaxDistance - re.Bottom;
-                                            } // moving down
-                                            else if (hf.SolidBottom && be.Velocity.Y < 0 && rf.Bottom <= re.Top)
-                                            {
-                                                MaxDistance = re.Top + be.Velocity.Y;
-                                                MaxDistance = Math.Max(MaxDistance, rf.Bottom);
-                                                be.Velocity.Y = MaxDistance - re.Top;
-                                            } // moving up
-                                        } // if re.LineX
-                                    }
-                                } // foreach hf
-                            } // foreach f
-                        //} // for s
-
-                        if (D == 0)
-                        {
-                            be.Position.X += be.Velocity.X;
-                            re.X += be.Velocity.X;
-                            be.Velocity.X = 0;
-                        }
-
-                        if (D == 1)
-                        {
-                            be.Position.Y += be.Velocity.Y;
-                            be.Velocity.Y = 0;
-                        }
-                    } // Dimension; X or Y
-                } // foreach he
-            } // foreach e
+            if (entityBounds.LineY.Intersects(subentityBounds.LineY, false))
+            {
+                if (entityHitbox.SolidRight && subentityHitbox.SolidLeft && entityBody.Velocity.X > 0 && subentityBounds.Left >= entityBounds.Right)
+                {
+                    MaxDistance = entityBounds.Right + entityBody.Velocity.X;
+                    MaxDistance = Math.Min(MaxDistance, subentityBounds.Left);
+                    entityBody.Velocity.X = MaxDistance - entityBounds.Right;
+                } // moving right
+                else if (entityHitbox.SolidLeft && subentityHitbox.SolidRight && entityBody.Velocity.X < 0 && subentityBounds.Right <= entityBounds.Left)
+                {
+                    MaxDistance = entityBounds.Left + entityBody.Velocity.X;
+                    MaxDistance = Math.Max(MaxDistance, subentityBounds.Right);
+                    entityBody.Velocity.X = MaxDistance - entityBounds.Left;
+                } // moving left
+            } // if entity.LineY
         }
     }
 }
