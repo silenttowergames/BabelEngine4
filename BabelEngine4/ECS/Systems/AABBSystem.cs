@@ -231,67 +231,81 @@ namespace BabelEngine4.ECS.Systems
                 return;
             }
 
+            RectangleF eBounds;
+
             ref AABB eAABB = ref entity.Get<AABB>();
             ref Body eBody = ref entity.Get<Body>();
 
-            for (int h = 0; h < eAABB.Hitboxes.Length; h++)
+            for (int D = 0; D < 2; D++)
             {
-                for (int s = 0; s < eAABB.Cells.Count; s++)
+                for (int h = 0; h < eAABB.Hitboxes.Length; h++)
                 {
-                    if (eAABB.Cells[s] == long.MaxValue)
-                    {
-                        break;
-                    }
+                    eBounds = eAABB.Hitboxes[h].GetRealBounds(eBody);
 
-                    for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
+                    for (int s = 0; s < eAABB.Cells.Count; s++)
                     {
-                        Entity subentity = Cells[eAABB.Cells[s]][e];
-
-                        if (subentity == default)
+                        if (eAABB.Cells[s] == long.MaxValue)
                         {
                             break;
                         }
 
-                        if (entity == subentity)
+                        for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
                         {
-                            continue;
-                        }
+                            Entity subentity = Cells[eAABB.Cells[s]][e];
 
-                        ref AABB sAABB = ref subentity.Get<AABB>();
-                        ref Body sBody = ref subentity.Get<Body>();
-
-                        for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
-                        {
-                            CollideWith(
-                                ref eAABB.Hitboxes[h],
-                                ref eBody,
-                                ref sAABB.Hitboxes[sh],
-                                ref sBody
-                            );
-
-                            if (eBody.Velocity == default)
+                            if (subentity == default)
                             {
-                                return;
+                                break;
+                            }
+
+                            if (entity == subentity)
+                            {
+                                continue;
+                            }
+
+                            ref AABB sAABB = ref subentity.Get<AABB>();
+                            ref Body sBody = ref subentity.Get<Body>();
+
+                            for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
+                            {
+                                CollideWith(
+                                    ref eAABB.Hitboxes[h],
+                                    ref eBody,
+                                    ref eBounds,
+                                    ref sAABB.Hitboxes[sh],
+                                    ref sBody,
+                                    D
+                                );
+
+                                if (eBody.Velocity == default)
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            eBody.Position += eBody.Velocity;
-            eBody.Velocity = default;
+                if (D == 0)
+                {
+                    eBody.Position.X += eBody.Velocity.X;
+                    eBody.Velocity.X = 0;
+                }
+                else if (D == 1)
+                {
+                    eBody.Position.Y += eBody.Velocity.Y;
+                    eBody.Velocity.Y = 0;
+                }
+            }
         }
 
-        void CollideWith(ref Hitbox entityHitbox, ref Body entityBody, ref Hitbox subentityHitbox, ref Body subentityBody)
+        void CollideWith(ref Hitbox entityHitbox, ref Body entityBody, ref RectangleF entityBounds, ref Hitbox subentityHitbox, ref Body subentityBody, int D)
         {
-            RectangleF
-                entityBounds = entityHitbox.GetRealBounds(entityBody),
-                subentityBounds = subentityHitbox.GetRealBounds(subentityBody)
-            ;
+            RectangleF subentityBounds = subentityHitbox.GetRealBounds(subentityBody);
 
             float MaxDistance;
 
-            if (entityBounds.LineX.Intersects(subentityBounds.LineX, false))
+            if (D == 1 && entityBounds.LineX.Intersects(subentityBounds.LineX, false))
             {
                 if (entityHitbox.SolidRight && subentityHitbox.SolidTop && entityBody.Velocity.Y > 0 && subentityBounds.Top >= entityBounds.Bottom)
                 {
@@ -307,7 +321,7 @@ namespace BabelEngine4.ECS.Systems
                 } // moving up
             } // if entity.LineX
 
-            if (entityBounds.LineY.Intersects(subentityBounds.LineY, false))
+            if (D == 0 && entityBounds.LineY.Intersects(subentityBounds.LineY, false))
             {
                 if (entityHitbox.SolidRight && subentityHitbox.SolidLeft && entityBody.Velocity.X > 0 && subentityBounds.Left >= entityBounds.Right)
                 {
