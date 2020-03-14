@@ -166,10 +166,7 @@ namespace BabelEngine4.ECS.Systems
                             break;
                         }
 
-                        int
-                            FrameID = X + (Y * map.Dimensions.X),
-                            Frame = map.Tiles[FrameID]
-                        ;
+                        int Frame = map[X,Y];
 
                         if (Frame == -1)
                         {

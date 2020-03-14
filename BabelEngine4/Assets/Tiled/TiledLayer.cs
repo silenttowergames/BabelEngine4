@@ -32,5 +32,28 @@ namespace BabelEngine4.Assets.Tiled
         [XmlArray("properties")]
         [XmlArrayItem("property")]
         public List<TiledProperty> properties;
+
+        Dictionary<string, string> Properties = new Dictionary<string, string>();
+
+        public void Load()
+        {
+            if (properties != null)
+            {
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    Properties.Add(properties[i].name, properties[i].value);
+                }
+            }
+        }
+
+        public string Property(string Key)
+        {
+            if (!Properties.ContainsKey(Key))
+            {
+                return null;
+            }
+
+            return Properties[Key];
+        }
     }
 }

@@ -11,6 +11,6 @@ namespace BabelEngine4.ECS.Entities
 {
     public interface IEntityFactory
     {
-        Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, List<TiledProperty> properties = null);
+        Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, TiledObject obj = null);
     }
 }

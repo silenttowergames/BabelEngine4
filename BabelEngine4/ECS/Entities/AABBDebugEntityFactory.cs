@@ -13,7 +13,7 @@ namespace BabelEngine4.ECS.Entities
 {
     public class AABBDebugEntityFactory : IEntityFactory
     {
-        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, TiledObject obj = null)
         {
             Entity e = App.world.CreateEntity();
 

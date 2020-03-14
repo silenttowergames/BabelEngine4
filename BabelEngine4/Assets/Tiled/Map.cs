@@ -40,7 +40,8 @@ namespace BabelEngine4.Assets.Tiled
                     ),
                     LayerID = layer.ID,
                     spriteSheet = Raw.map.tileset.name,
-                    LayerDepth = 1
+                    LayerDepth = 1,
+                    Solid = (layer.Property("collisions") == "true")
                 });
             }
 
@@ -57,7 +58,6 @@ namespace BabelEngine4.Assets.Tiled
                     }
 
                     App.Factories[Raw.map.objectGroups[O].objects[o].type].Create(
-                        //o / 1000f,
                         0,
                         Raw.map.objectGroups[O].ID,
                         Parallax,
@@ -65,7 +65,7 @@ namespace BabelEngine4.Assets.Tiled
                             Raw.map.objectGroups[O].objects[o].x,
                             Raw.map.objectGroups[O].objects[o].y
                         ),
-                        Raw.map.objectGroups[O].properties
+                        Raw.map.objectGroups[O].objects[o]
                     );
                 }
             }

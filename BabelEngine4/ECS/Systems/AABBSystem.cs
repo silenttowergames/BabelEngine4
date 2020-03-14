@@ -155,13 +155,23 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        Rectangle BoundsToCells(RectangleF bounds)
+        Rectangle BoundsToCells(RectangleF bounds, int CellSizeX = -1, int CellSizeY = -1)
         {
+            if (CellSizeX == -1)
+            {
+                CellSizeX = SpatialHashSize;
+            }
+
+            if (CellSizeY == -1)
+            {
+                CellSizeY = SpatialHashSize;
+            }
+
             return new Rectangle(
-                (int)Math.Floor(bounds.Position.X / SpatialHashSize),
-                (int)Math.Floor(bounds.Position.Y / SpatialHashSize),
-                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / SpatialHashSize),
-                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / SpatialHashSize)
+                (int)Math.Floor(bounds.Position.X / CellSizeX),
+                (int)Math.Floor(bounds.Position.Y / CellSizeY),
+                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX),
+                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY)
             );
         }
 
@@ -169,9 +179,23 @@ namespace BabelEngine4.ECS.Systems
         {
             BroadPhase();
 
+            // Get the collidable map layer
+            // Currently only supports one
+            ReadOnlySpan<TileMap> layers = App.world.Get<TileMap>();
+            TileMap? layer = null;
+            for (int i = 0; i < layers.Length; i++)
+            {
+                if (layers[i].Solid)
+                {
+                    layer = layers[i];
+
+                    break;
+                }
+            }
+
             for (int i = 0; i < AllEntities.Count; i++)
             {
-                NarrowPhase(AllEntities[i]);
+                NarrowPhase(AllEntities[i], layer);
             }
         }
 
@@ -228,40 +252,100 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        void NarrowPhase(Entity entity)
+        void NarrowPhase(Entity entity, TileMap? _map = null)
         {
             if (entity == default)
             {
                 return;
             }
 
+            // Allocation for storing main entity's bounds
+            // Initialize this on the stack here & use it a bunch later
             RectangleF eBounds;
 
+            // Tileset hitbox & bounds
+            RectangleF tileBounds;
+            Hitbox tileHitbox;
+
+            // Main entity's AABB component
+            // Contains hitboxes
             ref AABB eAABB = ref entity.Get<AABB>();
+            // Main entity's Body component
+            // Holds its position
             ref Body eBody = ref entity.Get<Body>();
 
-            for (int D = 0; D < 2; D++)
+            // Cycle through the two dimensions
+            for (int Dimension = 0; Dimension < 2; Dimension++)
             {
+                // Cycle through the hitboxes
+                // Not creating lots of new stack allocations, or garbage
                 for (int h = 0; h < eAABB.Hitboxes.Length; h++)
                 {
+                    // Fill eBounds with the current hitbox's bounds
+                    // GetRealBounds adds the Body's position to the Hitbox's size & position
+                    // 0,0 for the hitbox is when the center of the hitbox is on the entity's Position, not its top-left
+                    // GetRealBounds also takes care of placing it properly like that
                     eBounds = eAABB.Hitboxes[h].GetRealBounds(eBody);
 
-                    for (int s = 0; s < eAABB.Cells.Count; s++)
+                    //EntityCollideWithMap
+
+                    // Cycle through all of the cells the AABB component is in
+                    for (int CellID = 0; CellID < eAABB.Cells.Count; CellID++)
                     {
-                        if (eAABB.Cells[s] == long.MaxValue)
+                        // If it isn't a valid cell, skip
+                        if (eAABB.Cells[CellID] == long.MaxValue)
                         {
                             break;
                         }
 
-                        for (int e = 0; e < Cells[eAABB.Cells[s]].Count; e++)
+                        // Collide with solid map layer, if there is one
+                        if (_map != null)
                         {
-                            Entity subentity = Cells[eAABB.Cells[s]][e];
+                            TileMap map = (TileMap)_map;
+                            Vector2 TileSize = new Vector2(map.SizeEst.X, map.SizeEst.Y);
+                            Rectangle eMapBounds = BoundsToCells(eBounds, map.SizeEst.X, map.SizeEst.Y);
 
+                            for(int X = eMapBounds.X - 1; X < eMapBounds.Width + 1; X++)
+                            {
+                                for (int Y = eMapBounds.Y - 1; Y < eMapBounds.Height + 1; Y++)
+                                {
+                                    if (map[X, Y] == -1)
+                                    {
+                                        continue;
+                                    }
+
+                                    tileHitbox = new Hitbox()
+                                    {
+                                        Bounds = new RectangleF(TileSize / 2, TileSize)
+                                    };
+
+                                    tileBounds = tileHitbox.GetRealBounds(new Vector2(X, Y) * TileSize);
+
+                                    EntityCollideWithEntity(
+                                        ref eAABB.Hitboxes[h],
+                                        ref eBody,
+                                        ref eBounds,
+                                        ref tileHitbox,
+                                        ref tileBounds,
+                                        Dimension
+                                    );
+                                }
+                            }
+                        }
+
+                        // Cycle through the entities in that cell
+                        for (int e = 0; e < Cells[eAABB.Cells[CellID]].Count; e++)
+                        {
+                            Entity subentity = Cells[eAABB.Cells[CellID]][e];
+
+                            // If you've reached a default entity, then you've reached the end of the pool's valid entities
                             if (subentity == default)
                             {
                                 break;
                             }
 
+                            // Don't make an entity collide with itself!
+                            // Waste of processing power & undesired behavior
                             if (entity == subentity)
                             {
                                 continue;
@@ -272,13 +356,15 @@ namespace BabelEngine4.ECS.Systems
 
                             for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
                             {
-                                CollideWith(
+                                RectangleF subentityBounds = sAABB.Hitboxes[sh].GetRealBounds(sBody);
+
+                                EntityCollideWithEntity(
                                     ref eAABB.Hitboxes[h],
                                     ref eBody,
                                     ref eBounds,
                                     ref sAABB.Hitboxes[sh],
-                                    ref sBody,
-                                    D
+                                    ref subentityBounds,
+                                    Dimension
                                 );
 
                                 if (eBody.Velocity == default)
@@ -290,12 +376,12 @@ namespace BabelEngine4.ECS.Systems
                     }
                 }
 
-                if (D == 0)
+                if (Dimension == 0)
                 {
                     eBody.Position.X += eBody.Velocity.X;
                     eBody.Velocity.X = 0;
                 }
-                else if (D == 1)
+                else if (Dimension == 1)
                 {
                     eBody.Position.Y += eBody.Velocity.Y;
                     eBody.Velocity.Y = 0;
@@ -303,10 +389,8 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        void CollideWith(ref Hitbox entityHitbox, ref Body entityBody, ref RectangleF entityBounds, ref Hitbox subentityHitbox, ref Body subentityBody, int D)
+        void EntityCollideWithEntity(ref Hitbox entityHitbox, ref Body entityBody, ref RectangleF entityBounds, ref Hitbox subentityHitbox, ref RectangleF subentityBounds, int D)
         {
-            RectangleF subentityBounds = subentityHitbox.GetRealBounds(subentityBody);
-
             float MaxDistance;
 
             if (D == 1 && entityBounds.LineX.Intersects(subentityBounds.LineX, false))

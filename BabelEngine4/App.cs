@@ -37,44 +37,6 @@ namespace BabelEngine4
     
     public class App : Game
     {
-        public class SimpleFps
-        {
-            private double frames = 0;
-            private double updates = 0;
-            private double elapsed = 0;
-            private double last = 0;
-            private double now = 0;
-            public double msgFrequency = 1.0f;
-            public string msg = "";
-
-            /// <summary>
-            /// The msgFrequency here is the reporting time to update the message.
-            /// </summary>
-            public void Update(GameTime gameTime)
-            {
-                now = gameTime.TotalGameTime.TotalSeconds;
-                elapsed = (double)(now - last);
-                if (elapsed > msgFrequency)
-                {
-                    msg = " Fps: " + (frames / elapsed).ToString() + "\n Elapsed time: " + elapsed.ToString() + "\n Updates: " + updates.ToString() + "\n Frames: " + frames.ToString();
-                    //Console.WriteLine(msg);
-                    elapsed = 0;
-                    frames = 0;
-                    updates = 0;
-                    last = now;
-                }
-                updates++;
-            }
-
-            public void DrawFps(SpriteBatch spriteBatch, SpriteFont font, Vector2 fpsDisplayPosition, Color fpsTextColor)
-            {
-                spriteBatch.DrawString(font, msg, fpsDisplayPosition, fpsTextColor);
-                frames++;
-            }
-        }
-
-        SimpleFps fps = new SimpleFps();
-
         // A few foolish globals
 
         public static AssetManager assets;
@@ -92,8 +54,6 @@ namespace BabelEngine4
         public static World world;
 
         public static RenderTarget[] renderTargets;
-
-        public static int LayerIDCounter = 0;
 
         public static bool DoExit = false;
 
@@ -250,10 +210,6 @@ namespace BabelEngine4
             windowManager.Update();
 
             assets.Update();
-
-            Window.Title = $"{Title} {Version} {fps.msg}";
-
-            fps.Update(gameTime);
 
             base.Update(gameTime);
         }

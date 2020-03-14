@@ -32,10 +32,7 @@ namespace BabelEngine4.ECS.Components.AABB
 
         public RectangleF GetRealBounds(Body body, bool IncludeVelocity = false)
         {
-            RectangleF bounds = new RectangleF(
-                body.Position + Bounds.Position - (Bounds.Size / 2),
-                Bounds.Size
-            );
+            RectangleF bounds = GetRealBounds(body.Position);
 
             if (IncludeVelocity)
             {
@@ -57,6 +54,16 @@ namespace BabelEngine4.ECS.Components.AABB
                     bounds.Bottom += body.Velocity.Y;
                 }
             }
+
+            return bounds;
+        }
+
+        public RectangleF GetRealBounds(Vector2 Position)
+        {
+            RectangleF bounds = new RectangleF(
+                Position + Bounds.Position - (Bounds.Size / 2),
+                Bounds.Size
+            );
 
             return bounds;
         }

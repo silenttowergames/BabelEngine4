@@ -19,10 +19,17 @@ namespace BabelEngine4.ECS.Entities
     {
         public bool Alive = true;
 
-        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, List<TiledProperty> properties = null)
+        public Entity Create(float LayerDepth, int LayerID, float Parallax, Vector2 Position = default, TiledObject obj = null)
         {
+            Sprite sprite = new Sprite("8x8", "Protag") { Effect = SpriteEffects.None, LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax };
+
+            if (obj.Property("FlipX") == "true")
+            {
+                sprite.Effect = SpriteEffects.FlipHorizontally;
+            }
+
             Entity e = App.world.CreateEntity();
-            e.Set(new Sprite("8x8", "Protag") { Effect = SpriteEffects.None, LayerDepth = LayerDepth, LayerID = LayerID, Parallax = Parallax });
+            e.Set(sprite);
             e.Set(new AABB()
             {
                 Hitboxes = new Hitbox[]

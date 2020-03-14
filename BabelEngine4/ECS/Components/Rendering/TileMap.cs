@@ -58,5 +58,28 @@ namespace BabelEngine4.ECS.Components.Rendering
                 return App.assets.sprite(spriteSheet);
             }
         }
+
+        public int this[int key]
+        {
+            get
+            {
+                return Tiles[key];
+            }
+        }
+
+        public int this[int X, int Y]
+        {
+            get
+            {
+                int Tile = X + (Y * Dimensions.X);
+
+                if (Tile < 0 || Tile > Tiles.Length)
+                {
+                    return -1;
+                }
+
+                return Tiles[Tile];
+            }
+        }
     }
 }
