@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.Assets.Audio
 {
-    public interface IHasVolume
+    public interface IAudioAsset
     {
         void SetVolume(float Volume);
     }

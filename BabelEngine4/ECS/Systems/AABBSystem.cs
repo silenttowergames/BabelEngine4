@@ -182,6 +182,10 @@ namespace BabelEngine4.ECS.Systems
             Rectangle iBounds;
             long Hash;
 
+            // TODO: AABBSystem: AllEntities reset: one cycle instead?
+            // Have an index var that counts up with the entity span
+            // If that index exceeds the list's bounds, do Add. Otherwise, replace
+            // After the foreach, cycle through any remaining indexes & reset them
             ResetEntityList(AllEntities);
 
             foreach (Entity entity in EntitySpan)

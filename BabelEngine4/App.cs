@@ -14,6 +14,7 @@ using BabelEngine4.Scenes;
 using DefaultEcs;
 using DefaultEcs.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System;
@@ -27,8 +28,7 @@ using System.Xml.Serialization;
 
 namespace BabelEngine4
 {
-    // TODO: Corners
-    // TODO: Pause game & music/sfx when window is inactive (maybe inactive event?)
+    // TODO: Tile map collisions
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
     // TODO: Clean up test componentes/entities/systems/scenes
@@ -76,6 +76,7 @@ namespace BabelEngine4
         SimpleFps fps = new SimpleFps();
 
         // A few foolish globals
+
         public static AssetManager assets;
 
         public static Dictionary<string, IEntityFactory> Factories = new Dictionary<string, IEntityFactory>();
@@ -137,8 +138,6 @@ namespace BabelEngine4
             assets = new AssetManager(Content);
 
             config = Storage.Load<Config>("config.dat");
-
-            //IsFixedTimeStep = false;
         }
 
         protected override void Initialize()
@@ -171,6 +170,13 @@ namespace BabelEngine4
                 Exit();
             }
 
+            if (!IsActive)
+            {
+                assets.Update(true);
+
+                return;
+            }
+
             if (input.keyboard.Down(Microsoft.Xna.Framework.Input.Keys.LeftControl) && input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 windowManager.Fullscreen = !windowManager.Fullscreen;
@@ -180,6 +186,11 @@ namespace BabelEngine4
             {
                 Entity e = world.CreateEntity();
                 e.Set(new Jukebox() { music = "GB_Loop_04" });
+            }
+
+            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.I))
+            {
+                assets.sfx("button").Play(SFX.SFXCondition.NewQuietAll);
             }
 
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))
@@ -237,6 +248,8 @@ namespace BabelEngine4
             }
 
             windowManager.Update();
+
+            assets.Update();
 
             Window.Title = $"{Title} {Version} {fps.msg}";
 

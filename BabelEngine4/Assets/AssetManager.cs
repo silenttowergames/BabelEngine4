@@ -47,7 +47,15 @@ namespace BabelEngine4.Assets
             load<SpriteSheet, Texture2D>(sprites);
         }
 
-        void SetVolume<T>(float V, Dictionary<string, T> Assets) where T : IHasVolume
+        public void Update(bool Inactive = false)
+        {
+            for (int i = 0; i < sfxs.Values.Count; i++)
+            {
+                sfxs.Values.ElementAt(i).Update(Inactive);
+            }
+        }
+
+        void SetVolume<T>(float V, Dictionary<string, T> Assets) where T : IAudioAsset
         {
             foreach (T Asset in Assets.Values)
             {

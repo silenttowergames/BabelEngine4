@@ -11,7 +11,7 @@ namespace BabelEngine4.Scenes
 {
     public class TestScene2 : IScene
     {
-        Point SpawnMeasurements = new Point(4, 4);
+        Point SpawnMeasurements = new Point(16, 16);
 
         public void Load()
         {

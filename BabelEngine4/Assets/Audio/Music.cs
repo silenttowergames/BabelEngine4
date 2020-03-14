@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.Assets.Audio
 {
-    public class Music : Asset<SoundEffect>, IHasVolume
+    public class Music : Asset<SoundEffect>, IAudioAsset
     {
         public SoundEffectInstance Song
         {

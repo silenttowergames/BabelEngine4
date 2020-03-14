@@ -20,7 +20,6 @@ namespace BabelEngine4.ECS.Systems
 
         public override void Update()
         {
-            return;
             foreach (ref readonly Entity e in Set.GetEntities())
             {
                 ref Director director = ref e.Get<Director>();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BabelEngine4.Assets.Audio
 {
-    public class SFX : Asset<SoundEffect>, IHasVolume
+    public class SFX : Asset<SoundEffect>, IAudioAsset
     {
         public enum SFXCondition
         {
@@ -29,7 +29,7 @@ namespace BabelEngine4.Assets.Audio
         /// <summary>
         /// You can only have up to 4 unique instances of a sound effect. Only 16 can play at a time anyway!
         /// </summary>
-        SoundEffectInstance[] instances = new SoundEffectInstance[4];
+        SoundEffectInstanceContainer[] instances = new SoundEffectInstanceContainer[4];
 
         public SFX(string _Filename) : base(_Filename)
         {
@@ -41,17 +41,17 @@ namespace BabelEngine4.Assets.Audio
 
             for (int i = 0; i < instances.Length; i++)
             {
-                instances[i] = Raw.CreateInstance();
+                instances[i] = new SoundEffectInstanceContainer(Raw.CreateInstance());
             }
         }
 
-        public SoundEffectInstance Play(SFXCondition Condition = default)
+        public SoundEffectInstanceContainer Play(SFXCondition Condition = default)
         {
             int ret = -1;
 
             for (int i = 0; i < instances.Length; i++)
             {
-                if (instances[i].State == SoundState.Playing)
+                if (instances[i].State == AudioState.Playing)
                 {
                     // New: this isn't the one, keep looking for an available instance
                     // NewIfQuiet: get out of here, it isn't quiet
@@ -59,7 +59,7 @@ namespace BabelEngine4.Assets.Audio
 
                     if (Condition == SFXCondition.NewQuietAll)
                     {
-                        instances[i].Stop();
+                        instances[i].State = AudioState.Stopped;
 
                         if (i != 0)
                         {
@@ -80,17 +80,17 @@ namespace BabelEngine4.Assets.Audio
 
                 ret = i;
 
-                instances[i].Play();
+                instances[i].State = AudioState.Start;
 
                 break;
             }
 
-            if (ret != -1)
+            if (ret < 0 || ret >= instances.Length)
             {
-                return instances[ret];
+                return null;
             }
 
-            return null;
+            return instances[ret];
         }
 
         public void SetVolume(float Volume)
@@ -98,6 +98,26 @@ namespace BabelEngine4.Assets.Audio
             for (int i = 0; i < instances.Length; i++)
             {
                 instances[i].Volume = Math.Min(1, Math.Max(0, Volume));
+            }
+        }
+
+        public void Update(bool Inactive = false)
+        {
+            for (int i = 0; i < instances.Length; i++)
+            {
+                if (Inactive)
+                {
+                    if (instances[i].State == AudioState.Playing)
+                    {
+                        instances[i].State = AudioState.PausedGame;
+                    }
+                }
+                else if (instances[i].State == AudioState.PausedGame)
+                {
+                    instances[i].State = AudioState.Start;
+                }
+
+                instances[i].Update();
             }
         }
     }
