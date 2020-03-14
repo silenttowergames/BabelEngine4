@@ -10,6 +10,8 @@ namespace BabelEngine4.Assets.Audio
 {
     public class Music : Asset<SoundEffect>, IAudioAsset
     {
+        public bool Inactive = false;
+
         public SoundEffectInstance Song
         {
             get;

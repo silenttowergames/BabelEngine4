@@ -1,4 +1,5 @@
 ﻿using BabelEngine4.ECS.Components;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,17 @@ namespace BabelEngine4.ECS.Systems
                 return;
             }
 
-            musics[0].Music.Song.Play();
+            if (musics[0].Music.Inactive)
+            {
+                if (musics[0].Music.Song.State == SoundState.Paused)
+                {
+                    musics[0].Music.Song.Resume();
+                }
+            }
+            else
+            {
+                musics[0].Music.Song.Play();
+            }
         }
 
         public override void OnUnload()

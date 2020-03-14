@@ -49,9 +49,30 @@ namespace BabelEngine4.Assets
 
         public void Update(bool Inactive = false)
         {
-            for (int i = 0; i < sfxs.Values.Count; i++)
+            for (int i = 0; i < Math.Max(musics.Values.Count, sfxs.Values.Count); i++)
             {
-                sfxs.Values.ElementAt(i).Update(Inactive);
+                if (i < sfxs.Values.Count)
+                {
+                    sfxs.Values.ElementAt(i).Update(Inactive);
+                }
+
+                if (i < musics.Values.Count)
+                {
+                    if (Inactive)
+                    {
+                        if (musics.Values.ElementAt(i).Song.State != SoundState.Playing)
+                        {
+                            continue;
+                        }
+
+                        musics.Values.ElementAt(i).Inactive = true;
+                        musics.Values.ElementAt(i).Song.Pause();
+                    }
+                    else if (musics.Values.ElementAt(i).Inactive && musics.Values.ElementAt(i).Song.State == SoundState.Paused)
+                    {
+                        musics.Values.ElementAt(i).Inactive = false;
+                    }
+                }
             }
         }
 
