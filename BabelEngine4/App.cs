@@ -4,7 +4,6 @@ using BabelEngine4.Assets.Audio;
 using BabelEngine4.Assets.Json;
 using BabelEngine4.Assets.Sprites;
 using BabelEngine4.ECS.Components;
-using BabelEngine4.ECS.Components.AI;
 using BabelEngine4.ECS.Entities;
 using BabelEngine4.ECS.Systems;
 using BabelEngine4.Input;
@@ -31,7 +30,6 @@ namespace BabelEngine4
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
     // TODO: Clean up test componentes/entities/systems/scenes
-    // TODO: Make Tiled properties better?
     // TODO: Save states that don't save to file
     
     public class App : Game
@@ -141,17 +139,6 @@ namespace BabelEngine4
                 windowManager.Fullscreen = !windowManager.Fullscreen;
             }
 
-            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.P))
-            {
-                Entity e = world.CreateEntity();
-                e.Set(new Jukebox() { music = "GB_Loop_04" });
-            }
-
-            if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.I))
-            {
-                assets.sfx("button").Play(SFX.SFXCondition.NewQuietAll);
-            }
-
             if (input.keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.S))
             {
                 StateSave();
@@ -229,6 +216,11 @@ namespace BabelEngine4
 
             saveState = File.ReadAllBytes("savestate");
 
+            if (File.Exists("savestate"))
+            {
+                File.Delete("savestate");
+            }
+
             GC.Collect();
         }
 
@@ -248,7 +240,6 @@ namespace BabelEngine4
 
             world.Dispose();
 
-            //using (Stream stream = File.OpenRead("savestate"))
             using (Stream stream = new MemoryStream(saveState))
             {
                 world = serializer.Deserialize(stream);
