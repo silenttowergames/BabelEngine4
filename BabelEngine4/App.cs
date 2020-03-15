@@ -28,7 +28,6 @@ using System.Xml.Serialization;
 
 namespace BabelEngine4
 {
-    // TODO: Tile map collisions
     // TODO: A* pathfinding with tilemap
     // TODO: Stress test
     // TODO: Clean up test componentes/entities/systems/scenes

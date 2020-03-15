@@ -259,13 +259,26 @@ namespace BabelEngine4.ECS.Systems
                 return;
             }
 
+            // The entity you're colliding with
+            Entity subentity;
+
             // Allocation for storing main entity's bounds
             // Initialize this on the stack here & use it a bunch later
             RectangleF eBounds;
 
             // Tileset hitbox & bounds
+            // A bool that stores whether or not there's a map
+            bool HasMap = _map != null;
+            // A TileMap that stores either the map or, in case of no map, a default map component
+            TileMap map = _map == null ? default : (TileMap)_map;
+            // Store the map's tilesize as a Vector2 here for repeated use
+            Vector2 TileSize = new Vector2(map.SizeEst.X, map.SizeEst.Y);
+            // Allocate the bounds for a tile hitbox
             RectangleF tileBounds;
+            // Allocate a tile hitbox
             Hitbox tileHitbox;
+            // Allocate an int rectangle for your hitbox's bounds
+            Rectangle eMapBounds;
 
             // Main entity's AABB component
             // Contains hitboxes
@@ -281,13 +294,17 @@ namespace BabelEngine4.ECS.Systems
                 // Not creating lots of new stack allocations, or garbage
                 for (int h = 0; h < eAABB.Hitboxes.Length; h++)
                 {
+                    // Skip this hitbox if it's not solid
+                    if (!eAABB.Hitboxes[h].Solid)
+                    {
+                        continue;
+                    }
+
                     // Fill eBounds with the current hitbox's bounds
                     // GetRealBounds adds the Body's position to the Hitbox's size & position
                     // 0,0 for the hitbox is when the center of the hitbox is on the entity's Position, not its top-left
                     // GetRealBounds also takes care of placing it properly like that
                     eBounds = eAABB.Hitboxes[h].GetRealBounds(eBody);
-
-                    //EntityCollideWithMap
 
                     // Cycle through all of the cells the AABB component is in
                     for (int CellID = 0; CellID < eAABB.Cells.Count; CellID++)
@@ -299,11 +316,9 @@ namespace BabelEngine4.ECS.Systems
                         }
 
                         // Collide with solid map layer, if there is one
-                        if (_map != null)
+                        if (HasMap)
                         {
-                            TileMap map = (TileMap)_map;
-                            Vector2 TileSize = new Vector2(map.SizeEst.X, map.SizeEst.Y);
-                            Rectangle eMapBounds = BoundsToCells(eBounds, map.SizeEst.X, map.SizeEst.Y);
+                            eMapBounds = BoundsToCells(eBounds, map.SizeEst.X, map.SizeEst.Y);
 
                             for(int X = eMapBounds.X - 1; X < eMapBounds.Width + 1; X++)
                             {
@@ -336,7 +351,7 @@ namespace BabelEngine4.ECS.Systems
                         // Cycle through the entities in that cell
                         for (int e = 0; e < Cells[eAABB.Cells[CellID]].Count; e++)
                         {
-                            Entity subentity = Cells[eAABB.Cells[CellID]][e];
+                            subentity = Cells[eAABB.Cells[CellID]][e];
 
                             // If you've reached a default entity, then you've reached the end of the pool's valid entities
                             if (subentity == default)

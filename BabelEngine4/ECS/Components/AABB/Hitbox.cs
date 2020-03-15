@@ -18,7 +18,7 @@ namespace BabelEngine4.ECS.Components.AABB
             PassThroughLeft
         ;
 
-        public bool Solid => !PassThrough;
+        public bool Solid => !PassThrough && (SolidTop || SolidBottom || SolidRight || SolidLeft);
 
         public bool SolidTop => !PassThroughTop;
 
