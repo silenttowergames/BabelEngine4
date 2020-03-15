@@ -115,6 +115,11 @@ namespace BabelEngine4.Saving
 
         void SetVolume()
         {
+            if (!App.assets.Loaded)
+            {
+                return;
+            }
+
             float
                 Music = VolumeMusic * VolumeMaster,
                 SFX = VolumeSFX * VolumeMaster

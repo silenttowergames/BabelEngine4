@@ -30,11 +30,19 @@ namespace BabelEngine4.Assets
 
         Dictionary<string, SpriteSheet> sprites = new Dictionary<string, SpriteSheet>();
 
+        public bool Loaded
+        {
+            get;
+            private set;
+        }
+
         public AssetManager(ContentManager _Content, string _RootDir = "Content")
         {
             Content = _Content;
 
             Content.RootDirectory = _RootDir;
+
+            Loaded = false;
         }
 
         public void Load()
@@ -45,6 +53,8 @@ namespace BabelEngine4.Assets
             load<Shader, Effect>(shaders);
             load<SFX, SoundEffect>(sfxs);
             load<SpriteSheet, Texture2D>(sprites);
+
+            Loaded = true;
         }
 
         public void Update(bool Inactive = false)

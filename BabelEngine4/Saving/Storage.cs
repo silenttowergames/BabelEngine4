@@ -14,7 +14,7 @@ namespace BabelEngine4.Saving
             return System.IO.File.ReadAllText(Filename);
         }
 
-        public static T Load<T>(string Filename) where T : IStorable, new()
+        public static T Load<T>(string Filename, Action Default = null) where T : IStorable, new()
         {
             T obj;
 
@@ -30,6 +30,8 @@ namespace BabelEngine4.Saving
             {
                 obj = new T();
                 obj.Filename(Filename);
+
+                Default?.Invoke();
             }
 
             return obj;

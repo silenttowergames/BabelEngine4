@@ -66,12 +66,12 @@ namespace BabelEngine4
 
         public static DrawSystem drawSystem = new DrawSystem();
 
-        // Local vars
-
-        string
+        public static string
             Title,
             Version
         ;
+
+        public Action DefaultConfig = null;
 
         public App(string _Title, string _Version, Point Resolution, Point Size)
         {
@@ -93,13 +93,13 @@ namespace BabelEngine4
             };
 
             assets = new AssetManager(Content);
-
-            config = Storage.Load<Config>("config.dat");
         }
 
         protected override void Initialize()
         {
             Window.Title = $"{Title} {Version}";
+
+            config = Storage.Load<Config>("config.dat", DefaultConfig);
 
             base.Initialize();
         }
