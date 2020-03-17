@@ -178,16 +178,16 @@ namespace BabelEngine4.ECS.Systems
         public override void Update()
         {
             BroadPhase();
-
             // Get the collidable map layer
             // Currently only supports one
-            ReadOnlySpan<TileMap> layers = App.world.Get<TileMap>();
-            TileMap? layer = null;
-            for (int i = 0; i < layers.Length; i++)
+            Span<TileMap> layers = App.world.Get<TileMap>();
+            ref TileMap layer = ref TileMap.emptyMap;
+            //for (int i = 0; i < layers.Length; i++)
+            foreach(ref TileMap _layer in layers)
             {
-                if (layers[i].Solid)
+                if (_layer.Solid)
                 {
-                    layer = layers[i];
+                    layer = ref _layer;
 
                     break;
                 }
@@ -195,7 +195,7 @@ namespace BabelEngine4.ECS.Systems
 
             for (int i = 0; i < AllEntities.Count; i++)
             {
-                NarrowPhase(AllEntities[i], layer);
+                NarrowPhase(AllEntities[i], ref layer);
             }
         }
 
@@ -252,7 +252,7 @@ namespace BabelEngine4.ECS.Systems
             }
         }
 
-        void NarrowPhase(Entity entity, TileMap? _map = null)
+        void NarrowPhase(Entity entity, ref TileMap map)
         {
             if (entity == default)
             {
@@ -267,10 +267,8 @@ namespace BabelEngine4.ECS.Systems
             RectangleF eBounds;
 
             // Tileset hitbox & bounds
-            // A bool that stores whether or not there's a map
-            bool HasMap = _map != null;
-            // A TileMap that stores either the map or, in case of no map, a default map component
-            TileMap map = _map == null ? default : (TileMap)_map;
+            // A bool that stores whether or not there's a valid map
+            bool HasMap = map.LayerName != TileMap.emptyMap.LayerName;
             // Store the map's tilesize as a Vector2 here for repeated use
             Vector2 TileSize = new Vector2(map.SizeEst.X, map.SizeEst.Y);
             // Allocate the bounds for a tile hitbox
@@ -316,6 +314,7 @@ namespace BabelEngine4.ECS.Systems
                         }
 
                         // Collide with solid map layer, if there is one
+                        //*
                         if (HasMap)
                         {
                             eMapBounds = BoundsToCells(eBounds, map.SizeEst.X, map.SizeEst.Y);
@@ -347,6 +346,7 @@ namespace BabelEngine4.ECS.Systems
                                 }
                             }
                         }
+                        //*/
 
                         // Cycle through the entities in that cell
                         for (int e = 0; e < Cells[eAABB.Cells[CellID]].Count; e++)

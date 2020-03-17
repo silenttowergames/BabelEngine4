@@ -112,11 +112,8 @@ namespace BabelEngine4.ECS.Systems
                 sortMode: SpriteSortMode.FrontToBack,
                 blendState: BlendState.NonPremultiplied,
                 samplerState: SamplerState.PointClamp,
-                //effect: renderTarget.shader?.Raw,
                 transformMatrix: renderTarget.camera.matrix
             );
-
-            //renderTarget.shader?.Update?.Invoke(renderTarget.shader.Raw);
 
             // Allocating position for all things drawn
             Vector2 Position = new Vector2();
@@ -208,7 +205,7 @@ namespace BabelEngine4.ECS.Systems
 
                 Position = body.Position + (renderTarget.camera.Position * (1 - sprite.Parallax));
 
-                sprite.sheet.Draw(
+                sprite.sheet?.Draw(
                     App.renderer.spriteBatch,
                     Position,
                     sprite.AnimationID,

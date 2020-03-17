@@ -35,12 +35,19 @@ namespace BabelEngine4.Assets.Tiled
         [XmlAttribute(AttributeName = "renderorder")]
         public TiledRenderOrder renderOrder;
 
+        /*
         [XmlElement(ElementName = "objectgroup")]
         public List<TiledObjectGroup> objectGroups;
 
         [XmlElement(ElementName = "layer", Type = typeof(TiledLayerTile))]
         [XmlElement(ElementName = "imagelayer", Type = typeof(TiledLayerImage))]
         public List<TiledLayer> layers;
+        */
+
+        [XmlElement(ElementName = "objectgroup", Type = typeof(TiledObjectGroup))]
+        [XmlElement(ElementName = "layer", Type = typeof(TiledLayerTile))]
+        [XmlElement(ElementName = "imagelayer", Type = typeof(TiledLayerImage))]
+        public List<TiledGenericLayer> allLayers;
 
         [XmlArray("properties")]
         [XmlArrayItem("property")]

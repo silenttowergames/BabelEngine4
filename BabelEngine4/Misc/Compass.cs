@@ -45,11 +45,6 @@ namespace BabelEngine4.Misc
             }
         }
 
-        public void TurnTowards(Vector2 PosA, Vector2 PosB)
-        {
-            Rotation = Face(PosA, PosB);
-        }
-
         public static float Face(Vector2 PosA, Vector2 PosB)
         {
             return RealToRotation((float)Math.Atan2(PosA.Y - PosB.Y, PosA.X - PosB.X)) - 90;
@@ -63,6 +58,19 @@ namespace BabelEngine4.Misc
         public static float RealToRotation(float _Real)
         {
             return _Real / Legend;
+        }
+
+        public static Vector2 VelocityToMovement(float Speed, float _Rotation)
+        {
+            return new Vector2(
+                (float)(Math.Sin(_Rotation * Math.PI / 180) * Speed),
+                -(float)(Math.Cos(_Rotation * Math.PI / 180) * Speed)
+            );
+        }
+
+        public void TurnTowards(Vector2 PosA, Vector2 PosB)
+        {
+            Rotation = Face(PosA, PosB);
         }
     }
 }

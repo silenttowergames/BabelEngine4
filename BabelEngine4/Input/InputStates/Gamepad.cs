@@ -35,5 +35,25 @@ namespace BabelEngine4.Input.InputStates
                 Set(K, State.IsButtonDown(K));
             }
         }
+
+        public Vector2 LeftStick()
+        {
+            return State.ThumbSticks.Left;
+        }
+
+        public Vector2 RightStick()
+        {
+            return State.ThumbSticks.Right;
+        }
+
+        public float LeftTrigger()
+        {
+            return State.Triggers.Left;
+        }
+
+        public float RightTrigger()
+        {
+            return State.Triggers.Left;
+        }
     }
 }

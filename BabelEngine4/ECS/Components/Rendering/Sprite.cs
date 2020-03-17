@@ -76,7 +76,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             compass = new Compass();
             RenderTargetID = 0;
             Parallax = 1f;
-            Origin = new Vector2(App.assets.sprite(spriteSheet).SizeEst.X / 2, App.assets.sprite(spriteSheet).SizeEst.Y / 2);
+            Origin = new Vector2((App.assets.sprite(spriteSheet)?.SizeEst.X ?? 8) / 2, (App.assets.sprite(spriteSheet)?.SizeEst.Y ?? 8) / 2);
         }
     }
 }

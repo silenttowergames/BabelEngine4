@@ -52,7 +52,10 @@ namespace BabelEngine4
 
         public static RenderTarget[] renderTargets;
 
-        public static bool DoExit = false;
+        public static bool
+            DoExit = false,
+            SaveConfig = true
+        ;
 
         public static IScene Scene = null;
 
@@ -117,7 +120,10 @@ namespace BabelEngine4
 
         protected override void UnloadContent()
         {
-            config.Save();
+            if (SaveConfig)
+            {
+                config.Save();
+            }
         }
 
         protected override void Update(GameTime gameTime)

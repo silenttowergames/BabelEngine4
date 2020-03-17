@@ -114,7 +114,7 @@ namespace BabelEngine4.Assets
 
         T get<T, C>(Dictionary<string, T> assetMap, string Filename) where T : Asset<C>
         {
-            if(!assetMap.ContainsKey(Filename))
+            if (!assetMap.ContainsKey(Filename))
             {
                 return null;
             }

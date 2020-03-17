@@ -10,6 +10,11 @@ namespace BabelEngine4.ECS.Components.Rendering
 {
     public struct TileMap
     {
+        public static TileMap emptyMap = new TileMap()
+        {
+            LayerName = "BabelEngine4EmptyMap"
+        };
+
         public bool Solid;
 
         public int LayerID, RenderTargetID;
@@ -17,6 +22,8 @@ namespace BabelEngine4.ECS.Components.Rendering
         public float LayerDepth;
 
         public int[] Tiles;
+
+        public string LayerName;
 
         public string Data
         {
@@ -40,7 +47,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             {
                 if (sizeEst.X == 0)
                 {
-                    sizeEst = new Point(sheet.Meta.frames.Values.ElementAt(0).frame.w, sheet.Meta.frames.Values.ElementAt(0).frame.h);
+                    sizeEst = new Point(sheet?.Meta.frames.Values.ElementAt(0).frame.w ?? 8, sheet?.Meta.frames.Values.ElementAt(0).frame.h ?? 8);
                 }
 
                 return sizeEst;
@@ -55,6 +62,11 @@ namespace BabelEngine4.ECS.Components.Rendering
         {
             get
             {
+                if (spriteSheet == null)
+                {
+                    return null;
+                }
+
                 return App.assets.sprite(spriteSheet);
             }
         }

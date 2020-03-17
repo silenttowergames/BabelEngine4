@@ -46,20 +46,17 @@ namespace BabelEngine4.Assets.Tiled
                 }
             }
 
-            for (int i = 0; i < Math.Max(map.layers.Count, map.objectGroups.Count); i++)
+            for(int L = 0; L < map.allLayers.Count; L++)
             {
-                if (i < map.layers.Count)
-                {
-                    map.layers[i].Load();
-                }
+                map.allLayers[L].Load();
 
-                if (i < map.objectGroups.Count)
+                if (map.allLayers[L] is TiledObjectGroup)
                 {
-                    map.objectGroups[i].Load();
+                    TiledObjectGroup layer = (TiledObjectGroup)map.allLayers[L];
 
-                    for (int j = 0; j < map.objectGroups[i].objects.Count; j++)
+                    for (int O = 0; O < layer.objects.Count; O++)
                     {
-                        map.objectGroups[i].objects[j].Load();
+                        layer.objects[O].Load();
                     }
                 }
             }
