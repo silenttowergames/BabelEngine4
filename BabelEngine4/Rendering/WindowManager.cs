@@ -15,6 +15,8 @@ namespace BabelEngine4.Rendering
             fullscreen = false
         ;
 
+        public bool Letterbox = true;
+
         public float Zoom
         {
             get;
@@ -37,6 +39,7 @@ namespace BabelEngine4.Rendering
         }
 
         Point size;
+
         public Point WindowSize
         {
             get
@@ -105,8 +108,13 @@ namespace BabelEngine4.Rendering
                     App.renderer.graphics.ToggleFullScreen();
                 }
 
-                Point _Zoom = Size / App.renderer.resolution;
-                Zoom = (float)Math.Floor((float)Math.Min(_Zoom.X, _Zoom.Y));
+                Vector2 _Zoom = new Vector2(Size.X / (float)App.renderer.resolution.X, Size.Y / (float)App.renderer.resolution.Y);
+                Zoom = Math.Min(_Zoom.X, _Zoom.Y);
+
+                if (Letterbox)
+                {
+                    Zoom = (float)Math.Floor(Zoom);
+                }
 
                 App.renderer.graphics.ApplyChanges();
 

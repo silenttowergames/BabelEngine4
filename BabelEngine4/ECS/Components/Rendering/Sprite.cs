@@ -38,8 +38,16 @@ namespace BabelEngine4.ECS.Components.Rendering
 
             set
             {
+                if (animationID == value)
+                {
+                    return;
+                }
+
                 animationID = value;
+
                 Frame = 0;
+
+                animationTicker = new Ticker();
             }
         }
 
