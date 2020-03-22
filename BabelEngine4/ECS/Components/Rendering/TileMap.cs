@@ -85,7 +85,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             {
                 int Tile = X + (Y * Dimensions.X);
 
-                if (Tile < 0 || Tile > Tiles.Length)
+                if (Tile < 0 || Tile >= Tiles.Length)
                 {
                     return -1;
                 }
