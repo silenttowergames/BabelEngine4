@@ -11,7 +11,9 @@ namespace BabelEngine4.ECS.Components
     {
         public Vector2
             Position,
-            Velocity
+            Velocity,
+            InitialVelocity,
+            EffectiveVelocity
         ;
     }
 }

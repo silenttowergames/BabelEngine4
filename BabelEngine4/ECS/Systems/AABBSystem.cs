@@ -178,6 +178,7 @@ namespace BabelEngine4.ECS.Systems
         public override void Update()
         {
             BroadPhase();
+
             // Get the collidable map layer
             // Currently only supports one
             Span<TileMap> layers = App.world.Get<TileMap>();
@@ -216,6 +217,9 @@ namespace BabelEngine4.ECS.Systems
             {
                 ref AABB eAABB = ref entity.Get<AABB>();
                 ref Body eBody = ref entity.Get<Body>();
+
+                eBody.InitialVelocity = eBody.Velocity;
+                eBody.EffectiveVelocity = eBody.Velocity;
 
                 if (eBody.Velocity != default)
                 {
@@ -292,6 +296,11 @@ namespace BabelEngine4.ECS.Systems
                 // Not creating lots of new stack allocations, or garbage
                 for (int h = 0; h < eAABB.Hitboxes.Length; h++)
                 {
+                    if (eBody.Velocity == default)
+                    {
+                        break;
+                    }
+
                     // Skip this hitbox if it's not solid
                     if (!eAABB.Hitboxes[h].Solid)
                     {
@@ -307,6 +316,11 @@ namespace BabelEngine4.ECS.Systems
                     // Cycle through all of the cells the AABB component is in
                     for (int CellID = 0; CellID < eAABB.Cells.Count; CellID++)
                     {
+                        if (eBody.Velocity == default)
+                        {
+                            break;
+                        }
+
                         // If it isn't a valid cell, skip
                         if (eAABB.Cells[CellID] == long.MaxValue)
                         {
@@ -321,8 +335,18 @@ namespace BabelEngine4.ECS.Systems
 
                             for(int X = eMapBounds.X - 1; X < eMapBounds.Width + 1; X++)
                             {
+                                if (eBody.Velocity == default)
+                                {
+                                    break;
+                                }
+
                                 for (int Y = eMapBounds.Y - 1; Y < eMapBounds.Height + 1; Y++)
                                 {
+                                    if (eBody.Velocity == default)
+                                    {
+                                        break;
+                                    }
+
                                     if (map[X, Y] == -1)
                                     {
                                         continue;
@@ -351,6 +375,11 @@ namespace BabelEngine4.ECS.Systems
                         // Cycle through the entities in that cell
                         for (int e = 0; e < Cells[eAABB.Cells[CellID]].Count; e++)
                         {
+                            if (eBody.Velocity == default)
+                            {
+                                break;
+                            }
+
                             subentity = Cells[eAABB.Cells[CellID]][e];
 
                             // If you've reached a default entity, then you've reached the end of the pool's valid entities
@@ -371,6 +400,11 @@ namespace BabelEngine4.ECS.Systems
 
                             for (int sh = 0; sh < sAABB.Hitboxes.Length; sh++)
                             {
+                                if (eBody.Velocity == default)
+                                {
+                                    break;
+                                }
+
                                 RectangleF subentityBounds = sAABB.Hitboxes[sh].GetRealBounds(sBody);
 
                                 EntityCollideWithEntity(
@@ -381,11 +415,6 @@ namespace BabelEngine4.ECS.Systems
                                     ref subentityBounds,
                                     Dimension
                                 );
-
-                                if (eBody.Velocity == default)
-                                {
-                                    return;
-                                }
                             }
                         }
                     }
@@ -393,11 +422,13 @@ namespace BabelEngine4.ECS.Systems
 
                 if (Dimension == 0)
                 {
+                    eBody.EffectiveVelocity.X = eBody.Velocity.X;
                     eBody.Position.X += eBody.Velocity.X;
                     eBody.Velocity.X = 0;
                 }
                 else if (Dimension == 1)
                 {
+                    eBody.EffectiveVelocity.Y = eBody.Velocity.Y;
                     eBody.Position.Y += eBody.Velocity.Y;
                     eBody.Velocity.Y = 0;
                 }
