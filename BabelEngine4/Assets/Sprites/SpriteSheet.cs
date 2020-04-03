@@ -39,7 +39,7 @@ namespace BabelEngine4.Assets.Sprites
 
         public AsepriteAnimation GetAnimation(string AnimationID)
         {
-            if (!Animations.ContainsKey(AnimationID))
+            if (AnimationID == null || !Animations.ContainsKey(AnimationID))
             {
                 return null;
             }
@@ -73,6 +73,11 @@ namespace BabelEngine4.Assets.Sprites
             float LayerDepth
         )
         {
+            if (Animation == null)
+            {
+                return;
+            }
+
             int FrameID = Animations[Animation].from + Frame;
 
             Draw(

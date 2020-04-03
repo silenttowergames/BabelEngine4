@@ -16,7 +16,7 @@ namespace BabelEngine4.Scenes
             map = App.assets.map(_Filename);
         }
 
-        public void Load()
+        public virtual void Load()
         {
             map.Generate();
         }

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\..\DefaultEcs-master\source\DefaultEcs\DefaultEcs.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ECS\Components\AI\" />
+  </ItemGroup>
+
 </Project>

@@ -168,10 +168,10 @@ namespace BabelEngine4.ECS.Systems
             }
 
             return new Rectangle(
-                (int)Math.Floor(bounds.Position.X / CellSizeX),
-                (int)Math.Floor(bounds.Position.Y / CellSizeY),
-                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX),
-                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY)
+                (int)Math.Floor(bounds.Position.X / CellSizeX) - 1,
+                (int)Math.Floor(bounds.Position.Y / CellSizeY) - 1,
+                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX) + 1,
+                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY) + 1
             );
         }
 
@@ -307,6 +307,11 @@ namespace BabelEngine4.ECS.Systems
                         continue;
                     }
 
+                    if (Dimension == 0)
+                    {
+                        eAABB.Hitboxes[h].HitRight = eAABB.Hitboxes[h].HitLeft = eAABB.Hitboxes[h].HitBottom = eAABB.Hitboxes[h].HitTop = false;
+                    }
+
                     // Fill eBounds with the current hitbox's bounds
                     // GetRealBounds adds the Body's position to the Hitbox's size & position
                     // 0,0 for the hitbox is when the center of the hitbox is on the entity's Position, not its top-left
@@ -438,6 +443,7 @@ namespace BabelEngine4.ECS.Systems
         void EntityCollideWithEntity(ref Hitbox entityHitbox, ref Body entityBody, ref RectangleF entityBounds, ref Hitbox subentityHitbox, ref RectangleF subentityBounds, int D)
         {
             float MaxDistance;
+            Vector2 ogVelocity = entityBody.Velocity;
 
             if (D == 1 && entityBounds.LineX.Intersects(subentityBounds.LineX, false))
             {
@@ -446,12 +452,22 @@ namespace BabelEngine4.ECS.Systems
                     MaxDistance = entityBounds.Bottom + entityBody.Velocity.Y;
                     MaxDistance = Math.Min(MaxDistance, subentityBounds.Top);
                     entityBody.Velocity.Y = MaxDistance - entityBounds.Bottom;
+
+                    if (Math.Abs(MaxDistance - subentityBounds.Top) < 0.000001f)
+                    {
+                        entityHitbox.HitBottom = true;
+                    }
                 } // moving down
                 else if (entityHitbox.SolidTop && subentityHitbox.SolidBottom && entityBody.Velocity.Y < 0 && subentityBounds.Bottom <= entityBounds.Top)
                 {
                     MaxDistance = entityBounds.Top + entityBody.Velocity.Y;
                     MaxDistance = Math.Max(MaxDistance, subentityBounds.Bottom);
                     entityBody.Velocity.Y = MaxDistance - entityBounds.Top;
+
+                    if (Math.Abs(MaxDistance - subentityBounds.Bottom) < 0.000001f)
+                    {
+                        entityHitbox.HitTop = true;
+                    }
                 } // moving up
             } // if entity.LineX
 
@@ -462,12 +478,22 @@ namespace BabelEngine4.ECS.Systems
                     MaxDistance = entityBounds.Right + entityBody.Velocity.X;
                     MaxDistance = Math.Min(MaxDistance, subentityBounds.Left);
                     entityBody.Velocity.X = MaxDistance - entityBounds.Right;
+
+                    if (Math.Abs(MaxDistance - subentityBounds.Left) < 0.000001f)
+                    {
+                        entityHitbox.HitRight = true;
+                    }
                 } // moving right
                 else if (entityHitbox.SolidLeft && subentityHitbox.SolidRight && entityBody.Velocity.X < 0 && subentityBounds.Right <= entityBounds.Left)
                 {
                     MaxDistance = entityBounds.Left + entityBody.Velocity.X;
                     MaxDistance = Math.Max(MaxDistance, subentityBounds.Right);
                     entityBody.Velocity.X = MaxDistance - entityBounds.Left;
+
+                    if (Math.Abs(MaxDistance - subentityBounds.Right) < 0.000001f)
+                    {
+                        entityHitbox.HitLeft = true;
+                    }
                 } // moving left
             } // if entity.LineY
         }

@@ -10,12 +10,25 @@ namespace BabelEngine4.ECS.Components.AABB
 {
     public struct Hitbox
     {
+        public static Hitbox Square(int S)
+        {
+            return new Hitbox()
+            {
+                Bounds = new RectangleF(0, 0, S, S)
+            };
+        }
+
         public bool
             PassThrough,
             PassThroughTop,
             PassThroughBottom,
             PassThroughRight,
-            PassThroughLeft
+            PassThroughLeft,
+
+            HitBottom,
+            HitRight,
+            HitLeft,
+            HitTop
         ;
 
         public bool Solid => !PassThrough && (SolidTop || SolidBottom || SolidRight || SolidLeft);

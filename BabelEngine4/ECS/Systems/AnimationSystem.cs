@@ -17,6 +17,11 @@ namespace BabelEngine4.ECS.Systems
 
             for (int i = 0; i < sprites.Length; i++)
             {
+                if (sprites[i].Animation == null)
+                {
+                    continue;
+                }
+
                 if (sprites[i].animationTicker.GetIsFinished())
                 {
                     if (sprites[i].Frame++ >= sprites[i].Animation.Length)
