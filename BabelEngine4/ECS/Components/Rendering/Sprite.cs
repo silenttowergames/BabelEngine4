@@ -53,6 +53,26 @@ namespace BabelEngine4.ECS.Components.Rendering
 
         public SpriteEffects Effect;
 
+        public bool FlippedX
+        {
+            get
+            {
+                return Effect == SpriteEffects.FlipHorizontally;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    Effect = SpriteEffects.FlipHorizontally;
+                }
+                else
+                {
+                    Effect = SpriteEffects.None;
+                }
+            }
+        }
+
         public int
             Frame,
             LayerID,
@@ -85,6 +105,28 @@ namespace BabelEngine4.ECS.Components.Rendering
             RenderTargetID = 0;
             Parallax = 1f;
             Origin = new Vector2((App.assets.sprite(spriteSheet)?.SizeEst.X ?? 8) / 2, (App.assets.sprite(spriteSheet)?.SizeEst.Y ?? 8) / 2);
+        }
+
+        /// <summary>
+        /// Simple way to alternate Effect between None and FlipHorizontally
+        /// </summary>
+        public void Flip()
+        {
+            switch (Effect)
+            {
+                case SpriteEffects.None:
+                    {
+                        Effect = SpriteEffects.FlipHorizontally;
+
+                        break;
+                    }
+                case SpriteEffects.FlipHorizontally:
+                    {
+                        Effect = SpriteEffects.None;
+
+                        break;
+                    }
+            }
         }
     }
 }
