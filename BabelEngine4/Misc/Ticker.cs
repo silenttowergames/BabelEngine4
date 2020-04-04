@@ -20,10 +20,32 @@ namespace BabelEngine4.Misc
             private set;
         }
 
+        bool DontReset;
+
+        public bool ShouldReset
+        {
+            get
+            {
+                return !DontReset;
+            }
+
+            set
+            {
+                DontReset = !value;
+            }
+        }
+
         public Ticker(int _Limit)
         {
             Current = 0;
             Limit = _Limit;
+            DontReset = false;
+        }
+
+
+        public void Reset()
+        {
+            Current = 0;
         }
 
         public void Reset(int _Limit)
@@ -36,7 +58,14 @@ namespace BabelEngine4.Misc
         {
             if (Current++ >= Limit)
             {
-                Current = 0;
+                if (!DontReset)
+                {
+                    Current = 0;
+                }
+                else
+                {
+                    Current = Limit;
+                }
             }
         }
 

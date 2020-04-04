@@ -42,6 +42,8 @@ namespace BabelEngine4
 
         public static Dictionary<string, IScene> Scenes = new Dictionary<string, IScene>();
 
+        static List<Entity> RemovedEntities = new List<Entity>();
+
         public static InputManager input;
 
         public static Renderer renderer;
@@ -204,6 +206,16 @@ namespace BabelEngine4
             assets.Update();
 
             base.Update(gameTime);
+
+            if (RemovedEntities.Count > 0)
+            {
+                for (int i = 0; i < RemovedEntities.Count; i++)
+                {
+                    RemovedEntities[i].Dispose();
+
+                    RemovedEntities[i] = default;
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -211,6 +223,26 @@ namespace BabelEngine4
             drawSystem.Update();
 
             base.Draw(gameTime);
+        }
+
+        public static void RemoveEntity(Entity e)
+        {
+            if (RemovedEntities.Contains(e))
+            {
+                return;
+            }
+
+            for (int i = 0; i < RemovedEntities.Count; i++)
+            {
+                if (RemovedEntities[i] == default)
+                {
+                    RemovedEntities[i] = e;
+
+                    return;
+                }
+            }
+
+            RemovedEntities.Add(e);
         }
 
         public static void StateSave()

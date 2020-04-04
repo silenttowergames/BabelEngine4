@@ -20,7 +20,7 @@ namespace BabelEngine4.Assets.Sprites
 
         Point sizeEst;
 
-        public Point SizeEst
+        public virtual Point SizeEst
         {
             get
             {
@@ -60,7 +60,7 @@ namespace BabelEngine4.Assets.Sprites
             }
         }
 
-        public void Draw(
+        public virtual void Draw(
             SpriteBatch spriteBatch,
             Vector2 Position,
             string Animation,
@@ -93,7 +93,7 @@ namespace BabelEngine4.Assets.Sprites
             );
         }
 
-        public void Draw(
+        public virtual void Draw(
             SpriteBatch spriteBatch,
             Vector2 Position,
             Rectangle sourceRect,

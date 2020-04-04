@@ -25,11 +25,19 @@ namespace BabelEngine4.ECS.Components.AABB
             PassThroughRight,
             PassThroughLeft,
 
+            CanPass,
+            CanPassBottom,
+            CanPassTop,
+            CanPassRight,
+            CanPassLeft,
+
             HitBottom,
             HitRight,
             HitLeft,
             HitTop
         ;
+
+        public bool ReallyCanPass => CanPass && (CanPassBottom || CanPassTop || CanPassRight || CanPassLeft);
 
         public bool Solid => !PassThrough && (SolidTop || SolidBottom || SolidRight || SolidLeft);
 

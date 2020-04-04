@@ -168,10 +168,10 @@ namespace BabelEngine4.ECS.Systems
             }
 
             return new Rectangle(
-                (int)Math.Floor(bounds.Position.X / CellSizeX) - 1,
-                (int)Math.Floor(bounds.Position.Y / CellSizeY) - 1,
-                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX) + 1,
-                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY) + 1
+                (int)Math.Floor(bounds.Position.X / CellSizeX),
+                (int)Math.Floor(bounds.Position.Y / CellSizeY),
+                (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX),
+                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY)
             );
         }
 
@@ -196,6 +196,18 @@ namespace BabelEngine4.ECS.Systems
 
             for (int i = 0; i < AllEntities.Count; i++)
             {
+                if (!AllEntities[i].IsAlive)
+                {
+                    AllEntities[i] = default;
+
+                    continue;
+                }
+
+                if (AllEntities[i] == default)
+                {
+                    continue;
+                }
+
                 NarrowPhase(AllEntities[i], ref layer);
             }
         }
@@ -387,6 +399,18 @@ namespace BabelEngine4.ECS.Systems
 
                             subentity = Cells[eAABB.Cells[CellID]][e];
 
+                            if (!subentity.IsAlive)
+                            {
+                                subentity = default;
+
+                                continue;
+                            }
+
+                            if (subentity == default)
+                            {
+                                continue;
+                            }
+
                             // If you've reached a default entity, then you've reached the end of the pool's valid entities
                             if (subentity == default)
                             {
@@ -408,6 +432,11 @@ namespace BabelEngine4.ECS.Systems
                                 if (eBody.Velocity == default)
                                 {
                                     break;
+                                }
+
+                                if (sAABB.Hitboxes[sh].CanPass)
+                                {
+                                    continue;
                                 }
 
                                 RectangleF subentityBounds = sAABB.Hitboxes[sh].GetRealBounds(sBody);
