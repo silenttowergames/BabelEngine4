@@ -171,7 +171,7 @@ namespace BabelEngine4.ECS.Systems
                 (int)Math.Floor(bounds.Position.X / CellSizeX),
                 (int)Math.Floor(bounds.Position.Y / CellSizeY),
                 (int)Math.Ceiling((bounds.Position.X + bounds.Size.X) / CellSizeX),
-                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY)
+                (int)Math.Ceiling((bounds.Position.Y + bounds.Size.Y) / CellSizeY) + 1
             );
         }
 
@@ -236,6 +236,13 @@ namespace BabelEngine4.ECS.Systems
                 if (eBody.Velocity != default)
                 {
                     AddEntityToPooledList(AllEntities, entity);
+                }
+                else
+                {
+                    for (int h = 0; h < eAABB.Hitboxes.Length; h++)
+                    {
+                        eAABB.Hitboxes[h].HitRight = eAABB.Hitboxes[h].HitLeft = eAABB.Hitboxes[h].HitBottom = eAABB.Hitboxes[h].HitTop = false;
+                    }
                 }
 
                 if (eAABB.Cells == null)

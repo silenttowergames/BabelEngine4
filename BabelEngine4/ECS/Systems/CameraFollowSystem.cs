@@ -1,5 +1,6 @@
 ﻿using BabelEngine4.ECS.Components;
 using DefaultEcs;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,26 @@ namespace BabelEngine4.ECS.Systems
 
         public override void Update()
         {
+            Vector2 FollowPos;
+
             foreach (ref readonly Entity E in Set.GetEntities())
             {
                 ref Body body = ref E.Get<Body>();
                 ref CameraFollow camFollow = ref E.Get<CameraFollow>();
 
-                App.renderTargets[camFollow.RenderTargetID].Center(body.Position);
+                FollowPos = body.Position;
+
+                if (!camFollow.FollowX)
+                {
+                    FollowPos.X = App.renderTargets[camFollow.RenderTargetID].camera.Position.X + (App.renderTargets[camFollow.RenderTargetID].Resolution.X / 2);
+                }
+
+                if (!camFollow.FollowY)
+                {
+                    FollowPos.Y = App.renderTargets[camFollow.RenderTargetID].camera.Position.Y + (App.renderTargets[camFollow.RenderTargetID].Resolution.Y / 2);
+                }
+
+                App.renderTargets[camFollow.RenderTargetID].Center(FollowPos);
             }
         }
 
