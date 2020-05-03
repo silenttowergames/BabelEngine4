@@ -12,7 +12,7 @@ namespace BabelEngine4.Rendering
 {
     public class RenderTarget
     {
-        public Camera camera = new Camera() { Zoom = 1 };
+        public Camera camera = new Camera() { Zoom = 1, };
 
         public Color BGColor;
 
@@ -20,7 +20,8 @@ namespace BabelEngine4.Rendering
 
         public RenderTarget2D
             renderTarget,
-            renderTargetBackup
+            renderTargetBackup,
+            renderTargetOriginal
         ;
 
         public Shader[] shaders = null;
@@ -51,6 +52,8 @@ namespace BabelEngine4.Rendering
 
         public RenderTarget(int _ID, Point _Resolution, Point _Position = new Point(), Point _Size = new Point())
         {
+            camera.renderTarget = this;
+
             ID = _ID;
 
             Position = _Position;
@@ -79,6 +82,7 @@ namespace BabelEngine4.Rendering
         {
             renderTarget = CreateRenderTarget();
             renderTargetBackup = CreateRenderTarget();
+            renderTargetOriginal = CreateRenderTarget();
         }
 
         public void Setup(SpriteBatch spriteBatch, bool Clear = true)

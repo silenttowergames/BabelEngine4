@@ -22,7 +22,19 @@ namespace BabelEngine4.ECS.Systems
                 ref Body body = ref E.Get<Body>();
                 ref CameraFollow camFollow = ref E.Get<CameraFollow>();
 
-                FollowPos = body.Position;
+                FollowPos = body.Position - camFollow.Offset;
+
+                if (camFollow.RoundToX != 0)
+                {
+                    FollowPos.X -= FollowPos.X % camFollow.RoundToX;
+                    FollowPos.X += camFollow.RoundToX / 2;
+                }
+
+                if (camFollow.RoundToY != 0)
+                {
+                    FollowPos.Y -= FollowPos.Y % camFollow.RoundToY;
+                    FollowPos.Y += camFollow.RoundToY / 2;
+                }
 
                 if (!camFollow.FollowX)
                 {

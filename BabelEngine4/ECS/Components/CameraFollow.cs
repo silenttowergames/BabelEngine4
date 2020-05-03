@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,10 @@ namespace BabelEngine4.ECS.Components
     public struct CameraFollow
     {
         public int RenderTargetID;
+
+        public float RoundToX, RoundToY;
+
+        public Vector2 Offset;
 
         bool
             DontFollowX,

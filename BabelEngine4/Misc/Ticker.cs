@@ -14,11 +14,7 @@ namespace BabelEngine4.Misc
             private set;
         }
 
-        public int Current
-        {
-            get;
-            private set;
-        }
+        public int Current;
 
         bool DontReset;
 
@@ -54,9 +50,9 @@ namespace BabelEngine4.Misc
             Limit = _Limit;
         }
 
-        public void Update()
+        public void Update(float TimeMult = 1)
         {
-            if (Current++ >= Limit)
+            if (Current++ >= (Limit / TimeMult))
             {
                 if (!DontReset)
                 {
@@ -64,21 +60,26 @@ namespace BabelEngine4.Misc
                 }
                 else
                 {
-                    Current = Limit;
+                    Current = (int)(Limit / TimeMult);
                 }
             }
         }
 
-        public bool IsFinished()
+        public bool IsFinished(float TimeMult = 1)
         {
-            return Current >= Limit;
+            return Current >= (Limit / TimeMult);
         }
 
-        public bool GetIsFinished()
+        public bool GetIsFinished(float TimeMult = 1)
         {
-            Update();
+            Update(TimeMult);
 
-            return IsFinished();
+            return IsFinished(TimeMult);
+        }
+
+        public float Percentage(float TimeMult = 1)
+        {
+            return 1f / ((Limit / TimeMult) / Current);
         }
     }
 }

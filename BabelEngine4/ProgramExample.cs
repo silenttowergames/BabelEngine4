@@ -1,4 +1,5 @@
-﻿using BabelEngine4.ECS.Systems;
+﻿/*
+using BabelEngine4.ECS.Systems;
 using BabelEngine4.Rendering;
 using Microsoft.Xna.Framework;
 using System;
@@ -7,9 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelEngine4
+namespace ?
 {
-    /*
     public static class Animations
     {
         public static string
@@ -37,12 +37,11 @@ namespace BabelEngine4
         MoveDown,
         MoveUp,
     }
-    */
 
     /// <summary>
     /// The main class.
     /// </summary>
-    public static class ProgramExample
+    public static class Program
     {
         //public static Array ActionsValues = Enum.GetValues(typeof(Actions));
 
@@ -85,8 +84,13 @@ namespace BabelEngine4
                     // TODO: Add ChangeSelected event
                     new MenuSystem(),
                     new MenuItemSelectGoToSceneSystem(),
+
                     // Your AI systems
+                    // 
+
+                    // Your physics systems
                     new AABBSystem(),
+
                     // Your post-movement systems
                     new CameraFollowSystem(),
                     new AnimationSystem(),
@@ -95,16 +99,17 @@ namespace BabelEngine4
 
                 //App.Scenes.Add("test", new TiledScene("testmap"));
 
-                //App.Factories.Add("player", new PlayerFactory());
+                App.Factories.Add("player", new PlayerFactory());
 
 #if DEBUG
                 App.SaveConfig = false;
 #endif
 
-                //App.Scene = App.Scenes["test2"];
+                App.Scene = App.Scenes["test"];
 
                 app.Run();
             }
         }
     }
 }
+*/

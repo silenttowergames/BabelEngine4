@@ -13,6 +13,8 @@ namespace BabelEngine4.ECS.Components.Rendering
 {
     public struct Sprite
     {
+        public bool Invisible;
+        
         public Color color;
 
         public Compass compass;
@@ -105,6 +107,7 @@ namespace BabelEngine4.ECS.Components.Rendering
             RenderTargetID = 0;
             Parallax = 1f;
             Origin = new Vector2((App.assets.sprite(spriteSheet)?.SizeEst.X ?? 8) / 2, (App.assets.sprite(spriteSheet)?.SizeEst.Y ?? 8) / 2);
+            Invisible = false;
         }
 
         /// <summary>

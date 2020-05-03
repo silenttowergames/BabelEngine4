@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BabelEngine4.Misc;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,13 @@ namespace BabelEngine4.Rendering
             Rotation,
             Zoom
         ;
+
+        public RectangleF Bounds => new RectangleF(
+            Position.X,
+            Position.Y,
+            renderTarget.Resolution.X,
+            renderTarget.Resolution.Y
+        );
 
         public RenderTarget renderTarget;
 

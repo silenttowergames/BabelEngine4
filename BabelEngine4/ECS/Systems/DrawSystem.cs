@@ -196,7 +196,7 @@ namespace BabelEngine4.ECS.Systems
                 ref Sprite sprite = ref entity.Get<Sprite>();
 
                 // Could definitely be more efficient :/
-                if (sprite.RenderTargetID != renderTarget.ID)
+                if (sprite.Invisible || sprite.RenderTargetID != renderTarget.ID)
                 {
                     continue;
                 }
@@ -246,6 +246,20 @@ namespace BabelEngine4.ECS.Systems
                     getLayerDepth(text.LayerDepth, text.LayerID)
                 );
             }
+
+            App.renderer.spriteBatch.End();
+
+            // Generate original rendertarget
+
+            renderTarget.renderTargetOriginal.GraphicsDevice.SetRenderTarget(renderTarget.renderTargetOriginal);
+
+            App.renderer.spriteBatch.Begin(
+                sortMode: SpriteSortMode.FrontToBack,
+                blendState: BlendState.NonPremultiplied,
+                samplerState: SamplerState.PointClamp
+            );
+
+            App.renderer.spriteBatch.Draw(renderTarget.renderTarget, new Rectangle(0, 0, renderTarget.renderTarget.Width, renderTarget.renderTarget.Height), Color.White);
 
             App.renderer.spriteBatch.End();
         }

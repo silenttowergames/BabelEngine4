@@ -81,6 +81,8 @@ namespace BabelEngine4.ECS.Components.AI
 
         public void Reset()
         {
+            State = default;
+            
             foreach (Actions action in Program.ActionsValues)
             {
                 this[action] = false;

@@ -10,11 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DefaultEcs-master\source\DefaultEcs\DefaultEcs.csproj" />
+    <Folder Include="ECS\Components\AI\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ECS\Components\AI\" />
+    <ProjectReference Include="..\..\DefaultEcs-master\source\DefaultEcs\DefaultEcs.csproj" />
   </ItemGroup>
 
 </Project>
